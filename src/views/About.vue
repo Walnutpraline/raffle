@@ -7,16 +7,36 @@
         <button @click="stops">停止</button>
         <button @click="resets">复位</button>
     </div>
+    <div class="upload">
+      <el-switch
+        v-model="showXlsx"
+      >
+      </el-switch>
+      <Xlsx v-show="showXlsx" @getResult="getMyExcelData" /> 
+    </div>
+    <div class="lotteryDraw">
+      <div class="repeatBox">
+        <div>抽取是否可重复</div>
+        <el-switch
+        v-model="repeat"
+      >
+      </el-switch>
+      </div>
+      <el-button type="primary" @click="lotteryNameEvt">随机抽取名字</el-button>
+      <el-button type="primary" @click="lotteryNameStopEvt">停止</el-button>
+    </div>
     <Threed ref="threed" :table="tableData" :selectedCardIndex="cardIndex"/>
   </div>
 </template>
 
 <script>
 import Threed from '../components/threeD.vue'
+import Xlsx from '@/components/xlsx'
 export default {
   name: 'About',
   components: {
-    Threed
+    Threed,
+    Xlsx
   },
   data () {
     return {
@@ -421,7 +441,9 @@ export default {
         x: 10,
         y: 10
       }],
-      cardIndex:[30]
+      cardIndex:[30],
+      showXlsx:true,
+      repeat:true
     }
   },
   mounted () {
@@ -441,6 +463,37 @@ export default {
     },
     resets () {
       this.$refs.threed.resets()
+    },
+
+    getMyExcelData (data) {
+      // 上传表格
+      console.log(data)
+    },
+
+    // 随机抽取姓名
+    lotteryNameEvt() {
+      this.spheres()
+      this.lotterys()
+    },
+
+    // 停止抽取
+    lotteryNameStopEvt() {
+      // repeat是否可重复抽取
+      if(this.repeat) {
+        this.cardIndex = [Math.floor((Math.random()*this.tableData.length))]
+        console.log(this.cardIndex);
+      } else {
+        if(this.tableData.length === 0) {
+          that.$message({
+            message: '没有更多数据',
+            type: 'warning'
+          });
+        } else {
+          this.cardIndex = [Math.floor((Math.random()*this.tableData.length))]
+          this.tableData.splice(this.cardIndex - 1,1)
+        }
+      }
+      this.stops()
     }
   }
 }
@@ -451,6 +504,25 @@ export default {
   .num{
     position: fixed;
     z-index: 20;
+  }
+  .upload {
+    position: absolute;
+    z-index: 20;
+    right: 0;
+    width: 188px;
+    height: 66px;
+  }
+  .lotteryDraw {
+    position: absolute;
+    z-index: 20;
+    left: 32px;
+    top: 80px;
+    .repeatBox {
+      color: #fff;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+    }
   }
 }
 </style>
