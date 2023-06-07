@@ -1,14 +1,12 @@
 <template>
   <div class="about">
     <div id="container"></div>
-    <div id="menu">
-      <button id="table">TABLE</button>
-      <button id="sphere">SPHERE</button>
-      <button id="lottery">转动</button>
-      <button id="stop">停止</button>
-      <button id="reset">复位</button>
-      <button id="helix">HELIX</button>
-      <button id="grid">GRID</button>
+    <div class="num">
+        <button @click="tables">TABLE</button>
+        <button @click="spheres">SPHERE</button>
+        <button @click="lotterys">转动</button>
+        <button @click="stops">停止</button>
+        <button @click="resets">复位</button>
     </div>
   </div>
 </template>
@@ -645,44 +643,34 @@ export default {
       )
       this.camera.position.z = 3000
       this.scene = new THREE.Scene()
+      // 创建元素
+      this.createCard(this.table)
       // table
-      for (var i = 0; i < this.table.length; i += 5) {
-        var element = document.createElement('div')
-        element.className = 'element'
-        element.style.backgroundColor =
-          'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')'
-        var number = document.createElement('div')
-        number.className = 'number'
-        number.textContent = i / 5 + 1
-        element.appendChild(number)
-        var symbol = document.createElement('div')
-        symbol.className = 'symbol'
-        symbol.textContent = this.table[i]
-        element.appendChild(symbol)
-        var details = document.createElement('div')
-        details.className = 'details'
-        details.innerHTML = this.table[i + 1] + '<br>' + this.table[i + 2]
-        element.appendChild(details)
-        var object = new THREE.CSS3DObject(element)
-        object.position.x = Math.random() * 4000 - 2000
-        object.position.y = Math.random() * 4000 - 2000
-        object.position.z = Math.random() * 4000 - 2000
-        this.scene.add(object)
-        this.objects.push(object)
-        //
+      for (let i = 0; i < this.table.length; i += 5) {
         var objects = new THREE.Object3D()
         objects.position.x = this.table[i + 3] * 140 - 1330
         objects.position.y = -(this.table[i + 4] * 180) + 990
         this.targets.table.push(objects)
       }
-      //
+      // sphere
+      var vector = new THREE.Vector3()
+      for (var i = 0, l = this.objects.length; i < l; i++) {
+        var phi = Math.acos(-1 + (2 * i) / l)
+        var theta = Math.sqrt(l * Math.PI) * phi
+        var object = new THREE.Object3D()
+        object.position.x = 800 * Math.cos(theta) * Math.sin(phi)
+        object.position.y = 800 * Math.sin(theta) * Math.sin(phi)
+        object.position.z = 800 * Math.cos(phi)
+        vector.copy(object.position).multiplyScalar(2)
+        object.lookAt(vector)
+        this.targets.sphere.push(object)
+      }
       this.renderer = new THREE.CSS3DRenderer()
       this.renderer.setSize(window.innerWidth, window.innerHeight)
       this.renderer.domElement.style.position = 'absolute'
       document
         .getElementById('container')
         .appendChild(this.renderer.domElement)
-      //
       this.controls = new THREE.TrackballControls(
         this.camera,
         this.renderer.domElement
@@ -691,25 +679,33 @@ export default {
       this.controls.minDistance = 500
       this.controls.maxDistance = 6000
       this.controls.addEventListener('change', this.render)
-      // var button = document.getElementById("sphere");
-      // button.addEventListener(
-      //   "click",
-      //   function () {
-      //     this.transform(this.targets.sphere, 2000);
-      //   },
-      //   false
-      // );
       this.transform(this.targets.table, 5000)
-      //
-      // window.addEventListener("resize", this.onWindowResize, false);
+    },
+    createCard (cardList) {
+      for (let i = 0; i < cardList.length; i += 5) {
+        // 创建父元素
+        var element = document.createElement('div')
+        element.className = 'element'
+        element.style.backgroundColor =
+        'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
+        // 创建子元素
+        var symbol = document.createElement('div')
+        symbol.className = 'symbol'
+        symbol.textContent = cardList[i]
+        element.appendChild(symbol)
+        var object = new THREE.CSS3DObject(element)
+        object.position.x = Math.random() * 4000 - 2000
+        object.position.y = Math.random() * 4000 - 2000
+        object.position.z = Math.random() * 4000 - 2000
+        this.scene.add(object)
+        this.objects.push(object)
+      }
     },
     transform (targets, duration) {
       TWEEN.removeAll()
-
       for (var i = 0; i < this.objects.length; i++) {
         var object = this.objects[i]
         var target = targets[i]
-
         new TWEEN.Tween(object.position)
           .to(
             {
@@ -721,7 +717,6 @@ export default {
           )
           .easing(TWEEN.Easing.Exponential.InOut)
           .start()
-
         new TWEEN.Tween(object.rotation)
           .to(
             {
@@ -734,7 +729,6 @@ export default {
           .easing(TWEEN.Easing.Exponential.InOut)
           .start()
       }
-
       new TWEEN.Tween(this)
         .to({}, duration * 2)
         .onUpdate(this.render)
@@ -748,16 +742,12 @@ export default {
     },
     animate () {
       requestAnimationFrame(this.animate)
-
       TWEEN.update()
-
       this.controls.update()
     },
-
     render () {
       this.renderer.render(this.scene, this.camera)
     },
-
     rotateBall () {
       return new Promise((resolve) => {
         this.scene.rotation.y = 0
@@ -904,24 +894,98 @@ export default {
             resolve()
           })
       })
+    },
+    tables () {
+      this.transform(this.targets.table, 2000)
+    },
+    spheres () {
+      this.transform(this.targets.sphere, 2000)
+    },
+    lotterys () {
+      this.rotateBall()
+    },
+    stops () {
+      this.selectedCardIndex = [40]
+      this.rotateObj.stop()
+      this.selectCard()
+    },
+    resets () {
+      this.resetCard()
     }
   }
 }
 </script>
 
-<style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
+<style lang="scss">
+button {
+    color: rgba(127, 255, 255, 0.75);
+    background: transparent;
+    outline: 1px solid rgba(127, 255, 255, 0.75);
+    border: 0px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgba(0, 255, 255, 0.5);
+}
+
+button:active {
+    color: #000000;
+    background-color: rgba(0, 255, 255, 0.75);
 }
 ul {
   list-style-type: none;
   padding: 0;
 }
+
 li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
-  color: #42b983;
+.element {
+  width: 120px;
+  height: 160px;
+  box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
+  border: 1px solid rgba(127, 255, 255, 0.25);
+  text-align: center;
+  cursor: default;
+}
+
+.element:hover {
+  box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.75);
+  border: 1px solid rgba(127, 255, 255, 0.75);
+}
+
+.element .number {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 12px;
+  color: rgba(127, 255, 255, 0.75);
+}
+
+.element .symbol {
+  position: absolute;
+  top: 40px;
+  left: 0px;
+  right: 0px;
+  font-size: 60px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.95);
+}
+
+.element .details {
+  position: absolute;
+  bottom: 15px;
+  left: 0px;
+  right: 0px;
+  font-size: 12px;
+  color: rgba(127, 255, 255, 0.75);
+}
+.num{
+  position: fixed;
+  z-index: 20;
 }
 </style>
