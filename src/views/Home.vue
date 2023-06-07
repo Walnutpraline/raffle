@@ -6,7 +6,6 @@
     >
     </el-switch>
     <xlsx v-show="showXlsx" @getResult="getMyExcelData">
-      
     </xlsx>
   </div>
 </template>

@@ -1,13 +1,13 @@
 <template>
   <div class="about">
     <div class="num">
-        <button @click="tables">TABLE</button>
-        <button @click="spheres">SPHERE</button>
-        <button @click="lotterys">转动</button>
-        <button @click="stops">停止</button>
-        <button @click="resets">复位</button>
+      <button @click="tables">TABLE</button>
+      <button @click="spheres">SPHERE</button>
+      <button @click="lotterys">转动</button>
+      <button @click="stops">停止</button>
+      <button @click="resets">复位</button>
     </div>
-    <Threed ref="threed" :table="tableData" :selectedCardIndex="cardIndex"/>
+    <Threed ref="threed" :table="tableData" :selectedCardIndex="cardIndex" />
   </div>
 </template>
 
@@ -18,7 +18,7 @@ export default {
   components: {
     Threed
   },
-  data () {
+  data() {
     return {
       tableData: [{
         name: 'Hydrogen', // 名称
@@ -421,34 +421,69 @@ export default {
         x: 10,
         y: 10
       }],
-      cardIndex:[30]
+      cardIndex: [30]
     }
   },
-  mounted () {
+  created() {
+    this.fromdata()
+  },
+  mounted() {
   },
   methods: {
-    tables () {
+    tables() {
       this.$refs.threed.tables()
     },
-    spheres () {
+    spheres() {
       this.$refs.threed.spheres()
     },
-    lotterys () {
+    lotterys() {
       this.$refs.threed.lotterys()
     },
-    stops () {
+    stops() {
       this.$refs.threed.stops()
     },
-    resets () {
+    resets() {
       this.$refs.threed.resets()
+    },
+    // 数据格式化
+    fromdata(list) {
+      let data = []
+      let xNum = 1
+      let yNum = 1
+      if (list instanceof Array) {
+        list.map((value, index) => {
+          if (xNum < 11) {
+            data.push({
+              name: value,
+              x: xNum,
+              y: yNum
+            })
+          } else {
+            yNum++
+            xNum = 1
+            data.push({
+              name: value,
+              x: xNum,
+              y: yNum
+            })
+          }
+          xNum++
+        })
+        return data
+      } else {
+        this.$message({
+          message: '请导入数组类型数据',
+          type: 'warning'
+        });
+      }
     }
   }
 }
 </script>
 
 <style lang="scss">
-.about{
-  .num{
+.about {
+  .num {
     position: fixed;
     z-index: 20;
   }
