@@ -447,6 +447,9 @@ export default {
     },
     // 数据格式化
     fromdata(list) {
+      if(arguments.length==0){
+        return false
+      }
       let data = []
       let xNum = 1
       let yNum = 1
