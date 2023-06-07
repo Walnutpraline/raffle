@@ -7,7 +7,7 @@
         <button @click="stops">停止</button>
         <button @click="resets">复位</button>
     </div>
-    <Threed ref="threed" :table="tableData"/>
+    <Threed ref="threed" :table="tableData" :selectedCardIndex="cardIndex"/>
   </div>
 </template>
 
@@ -420,7 +420,8 @@ export default {
         name: 'Hydrogen',
         x: 10,
         y: 10
-      }]
+      }],
+      cardIndex:[30]
     }
   },
   mounted () {

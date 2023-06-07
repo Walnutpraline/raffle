@@ -25,13 +25,18 @@ export default {
         helix: [],
         grid: []
       },
-      Resolution: 1,
-      selectedCardIndex: [], // 中奖卡牌
+      Resolution: 1,// 中奖卡牌
       currentLuckys: [['H', 'Hydrogen', 'Hydrogen']]
     }
   },
   props: {
     table: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
+    selectedCardIndex: {
       type: Array,
       default () {
         return []
