@@ -1,7 +1,13 @@
 <!-- eslint-disable camelcase -->
 <template>
   <div class="home">
-    <xlsx @getResult="getMyExcelData">导入参数</xlsx>
+    <el-switch
+      v-model="showXlsx"
+    >
+    </el-switch>
+    <xlsx v-show="showXlsx" @getResult="getMyExcelData">
+      
+    </xlsx>
   </div>
 </template>
 
@@ -13,6 +19,11 @@ export default {
   components: {
     xlsx
   },
+  data() {
+    return {
+      showXlsx:true
+    }
+  },
   methods: {
     getMyExcelData (data) {
       // 上传表格
@@ -21,3 +32,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .home {
+    position: absolute;
+    z-index: 2;
+    right: 0;
+  }
+</style>
