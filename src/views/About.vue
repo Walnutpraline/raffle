@@ -447,7 +447,15 @@ export default {
     }
   },
   created() {
-    this.fromdata()
+    if(JSON.parse(localStorage.getItem('nameData')) == null) {
+      this.$message({
+        message: '请先上传表格数据！',
+        type: 'warning'
+      });
+      return
+    }
+    this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
+    
   },
   mounted() {
   },
@@ -470,7 +478,11 @@ export default {
 
     getMyExcelData (data) {
       // 上传表格
-      console.log(data)
+      let newArr = []
+      data.forEach(it => {
+        newArr.push(it.name)
+      });
+      localStorage.setItem('nameData',JSON.stringify(newArr))
     },
 
     // 随机抽取姓名
