@@ -25,8 +25,7 @@ export default {
         helix: [],
         grid: []
       },
-      Resolution: 1,// 中奖卡牌
-      currentLuckys: [['H', 'Hydrogen', 'Hydrogen']]
+      Resolution: 1,
     }
   },
   props: {
@@ -197,37 +196,14 @@ export default {
     selectCard (duration = 600) {
       this.rotate = false
       const width = 240
-      let tag = -(this.currentLuckys.length - 1) / 2
+      let tag = 0 //控制中将卡牌位置
       const locates = []
-      // 计算位置信息, 大于5个分两排显示
-      if (this.currentLuckys.length > 5) {
-        const yPosition = [-87, 87]
-        const l = this.selectedCardIndex.length
-        const mid = Math.ceil(l / 2)
-        tag = -(mid - 1) / 2
-        for (let i = 0; i < mid; i++) {
-          locates.push({
-            x: tag * width * this.Resolution,
-            y: yPosition[0] * this.Resolution
-          })
-          tag++
-        }
-        tag = -(l - mid - 1) / 2
-        for (let i = mid; i < l; i++) {
-          locates.push({
-            x: tag * width * this.Resolution,
-            y: yPosition[1] * this.Resolution
-          })
-          tag++
-        }
-      } else {
-        for (let i = this.selectedCardIndex.length; i > 0; i--) {
-          locates.push({
-            x: tag * width * this.Resolution,
-            y: 0 * this.Resolution
-          })
-          tag++
-        }
+      for (let i = this.selectedCardIndex.length; i > 0; i--) {
+        locates.push({
+          x: tag * width * this.Resolution,
+          y: 0 * this.Resolution
+        })
+        tag++
       }
       this.selectedCardIndex.forEach((cardIndex, index) => {
         this.changeCard(cardIndex, 'rgba(253, 105, 0, 0.95)')
