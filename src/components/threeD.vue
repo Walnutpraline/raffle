@@ -1,0 +1,357 @@
+<template>
+  <div class="threeD">
+    <div id="container"></div>
+  </div>
+</template>
+
+<script>
+import * as THREE from 'three'
+import * as TWEEN from '@tweenjs/tween.js'
+import '../utils/CSS3DRenderer'
+import '../utils/TrackballControls'
+export default {
+  name: 'threeD',
+  data () {
+    return {
+      rotateOb: '',
+      camera: '',
+      scene: '',
+      renderer: '',
+      controls: '',
+      objects: [],
+      targets: {
+        table: [],
+        sphere: [],
+        helix: [],
+        grid: []
+      },
+      Resolution: 1,
+      selectedCardIndex: [], // 中奖卡牌
+      currentLuckys: [['H', 'Hydrogen', 'Hydrogen']]
+    }
+  },
+  props: {
+    table: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
+  },
+  mounted () {
+    this.init()
+    this.animate()
+  },
+  methods: {
+    init () {
+      this.camera = new THREE.PerspectiveCamera(
+        40,
+        window.innerWidth / window.innerHeight,
+        1,
+        10000
+      )
+      this.camera.position.z = 3000
+      this.scene = new THREE.Scene()
+      // 创建元素
+      this.createCard(this.table)
+      // 生成table
+      for (let i = 0; i < this.table.length; i++) {
+        var objects = new THREE.Object3D()
+        // x轴位置
+        objects.position.x = this.table[i].x * 240 - 1330
+        // y轴位置
+        objects.position.y = -(this.table[i].y * 180) + 990
+        this.targets.table.push(objects)
+      }
+      // 生成sphere
+      var vector = new THREE.Vector3()
+      for (var i = 0, l = this.objects.length; i < l; i++) {
+        var phi = Math.acos(-1 + (2 * i) / l)
+        var theta = Math.sqrt(l * Math.PI) * phi
+        var object = new THREE.Object3D()
+        object.position.x = 800 * Math.cos(theta) * Math.sin(phi)
+        object.position.y = 800 * Math.sin(theta) * Math.sin(phi)
+        object.position.z = 800 * Math.cos(phi)
+        vector.copy(object.position).multiplyScalar(2)
+        object.lookAt(vector)
+        this.targets.sphere.push(object)
+      }
+      this.renderer = new THREE.CSS3DRenderer()
+      this.renderer.setSize(window.innerWidth, window.innerHeight)
+      this.renderer.domElement.style.position = 'absolute'
+      document
+        .getElementById('container')
+        .appendChild(this.renderer.domElement)
+      this.controls = new THREE.TrackballControls(
+        this.camera,
+        this.renderer.domElement
+      )
+      this.controls.rotateSpeed = 0.5
+      this.controls.minDistance = 500
+      this.controls.maxDistance = 6000
+      this.controls.addEventListener('change', this.render)
+      this.transform(this.targets.table, 5000)
+    },
+    // 创建元素函数
+    createCard (cardList) {
+      for (let i = 0; i < cardList.length; i++) {
+        // 创建父元素
+        var element = document.createElement('div')
+        element.className = 'element'
+        element.style.backgroundColor =
+        'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
+        // 创建子元素
+        var symbol = document.createElement('span')
+        symbol.className = 'symbol'
+        symbol.textContent = cardList[i].name
+        element.appendChild(symbol)
+        var object = new THREE.CSS3DObject(element)
+        object.position.x = Math.random() * 4000 - 2000
+        object.position.y = Math.random() * 4000 - 2000
+        object.position.z = Math.random() * 4000 - 2000
+        this.scene.add(object)
+        this.objects.push(object)
+      }
+    },
+    transform (targets, duration) {
+      TWEEN.removeAll()
+      for (var i = 0; i < this.objects.length; i++) {
+        var object = this.objects[i]
+        var target = targets[i]
+        new TWEEN.Tween(object.position)
+          .to(
+            {
+              x: target.position.x,
+              y: target.position.y,
+              z: target.position.z
+            },
+            Math.random() * duration + duration
+          )
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start()
+        new TWEEN.Tween(object.rotation)
+          .to(
+            {
+              x: target.rotation.x,
+              y: target.rotation.y,
+              z: target.rotation.z
+            },
+            Math.random() * duration + duration
+          )
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start()
+      }
+      new TWEEN.Tween(this)
+        .to({}, duration * 2)
+        .onUpdate(this.render)
+        .start()
+    },
+    onWindowResize () {
+      this.camera.aspect = window.innerWidth / window.innerHeight
+      this.camera.updateProjectionMatrix()
+      this.render.setSize(window.innerWidth, window.innerHeight)
+      this.render()
+    },
+    animate () {
+      requestAnimationFrame(this.animate)
+      TWEEN.update()
+      this.controls.update()
+    },
+    render () {
+      this.renderer.render(this.scene, this.camera)
+    },
+    rotateBall () {
+      return new Promise((resolve) => {
+        this.scene.rotation.y = 0
+        this.rotateObj = new TWEEN.Tween(this.scene.rotation)
+        this.rotateObj
+          .to(
+            {
+              y: Math.PI * 6 * 1000
+            },
+            3000 * 1000
+          )
+          .onUpdate(this.render)
+          // .easing(TWEEN.Easing.Linear)
+          .start()
+          .onStop(() => {
+            this.scene.rotation.y = 0
+            resolve()
+          })
+          .onComplete(() => {
+            resolve()
+          })
+      })
+    },
+    // 卡牌样式改变
+    changeCard (cardIndex, color) {
+      const card = this.objects[cardIndex].element
+      card.style.backgroundColor =
+      color || 'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
+    },
+    selectCard (duration = 600) {
+      this.rotate = false
+      const width = 240
+      let tag = -(this.currentLuckys.length - 1) / 2
+      const locates = []
+      // 计算位置信息, 大于5个分两排显示
+      if (this.currentLuckys.length > 5) {
+        const yPosition = [-87, 87]
+        const l = this.selectedCardIndex.length
+        const mid = Math.ceil(l / 2)
+        tag = -(mid - 1) / 2
+        for (let i = 0; i < mid; i++) {
+          locates.push({
+            x: tag * width * this.Resolution,
+            y: yPosition[0] * this.Resolution
+          })
+          tag++
+        }
+        tag = -(l - mid - 1) / 2
+        for (let i = mid; i < l; i++) {
+          locates.push({
+            x: tag * width * this.Resolution,
+            y: yPosition[1] * this.Resolution
+          })
+          tag++
+        }
+      } else {
+        for (let i = this.selectedCardIndex.length; i > 0; i--) {
+          locates.push({
+            x: tag * width * this.Resolution,
+            y: 0 * this.Resolution
+          })
+          tag++
+        }
+      }
+      this.selectedCardIndex.forEach((cardIndex, index) => {
+        this.changeCard(cardIndex, 'rgba(253, 105, 0, 0.95)')
+        var object = this.objects[cardIndex]
+        new TWEEN.Tween(object.position)
+          .to(
+            {
+              x: locates[index].x,
+              y: locates[index].y * this.Resolution,
+              z: 2200
+            },
+            Math.random() * duration + duration
+          )
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start()
+        new TWEEN.Tween(object.rotation)
+          .to(
+            {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            Math.random() * duration + duration
+          )
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start()
+        object.element.classList.add('prize')
+        tag++
+      })
+      new TWEEN.Tween(this)
+        .to({}, duration * 2)
+        .onUpdate(this.render)
+        .start()
+        .onComplete(() => {
+          // 动画结束后可以操作
+        })
+    },
+    // 复位函数
+    resetCard () {
+      const duration = 600
+      this.selectedCardIndex.forEach((index) => {
+        this.changeCard(index)
+        const object = this.objects[index]
+        const target = this.targets.sphere[index]
+        new TWEEN.Tween(object.position)
+          .to(
+            {
+              x: target.position.x,
+              y: target.position.y,
+              z: target.position.z
+            },
+            Math.random() * duration + duration
+          )
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start()
+        new TWEEN.Tween(object.rotation)
+          .to(
+            {
+              x: target.rotation.x,
+              y: target.rotation.y,
+              z: target.rotation.z
+            },
+            Math.random() * duration + duration
+          )
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start()
+      })
+      return new Promise((resolve) => {
+        new TWEEN.Tween(this)
+          .to({}, duration * 2)
+          .onUpdate(this.render)
+          .start()
+          .onComplete(() => {
+            this.selectedCardIndex.forEach((index) => {
+              const object = this.objects[index]
+              object.element.classList.remove('prize')
+            })
+            resolve()
+          })
+      })
+    },
+    // 显示表单形状
+    tables () {
+      this.transform(this.targets.table, 2000)
+    },
+    // 显示形状
+    spheres () {
+      this.transform(this.targets.sphere, 2000)
+    },
+    // 转动
+    lotterys () {
+      this.rotateBall()
+    },
+    // 停止转动
+    stops () {
+      this.selectedCardIndex = [40]
+      this.rotateObj.stop()
+      this.selectCard()
+    },
+    // 复位
+    resets () {
+      this.resetCard()
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+.element {
+  width: 220px;
+  height: 160px;
+  box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
+  border: 1px solid rgba(127, 255, 255, 0.25);
+  line-height: 80px;
+  .symbol {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    right: 0px;
+    font-size: 60px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.95);
+    font-size: 42px;
+  }
+}
+
+.num{
+  position: fixed;
+  z-index: 20;
+}
+</style>
