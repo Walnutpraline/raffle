@@ -48,10 +48,12 @@ export default {
     }
   },
   mounted() {
-    this.init()
-    this.animate()
   },
   methods: {
+    createdThree() {
+      this.init()
+      this.animate()
+    },
     init() {
       this.camera = new THREE.PerspectiveCamera(
         40,
@@ -103,6 +105,8 @@ export default {
     },
     // 创建元素函数
     createCard(cardList) {
+      // 销毁 div 标签下的所有子节点
+      document.getElementById('container').innerHTML = "";
       for (let i = 0; i < cardList.length; i++) {
         // 创建父元素
         var element = document.createElement('div')
