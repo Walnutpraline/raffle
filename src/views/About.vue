@@ -85,8 +85,8 @@ export default {
   methods: {
     // 抽取姓名
     drawNameEvt() {
-      this.cardIndex = []
-      this.problems = false
+      this.cardIndex = [] //清空中奖
+      this.problems = false //是否抽取题目
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
@@ -100,6 +100,7 @@ export default {
     // 抽取奖品
     drawPrizeEvt() {
       this.cardIndex = []
+      this.problems = false
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('prizeData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
