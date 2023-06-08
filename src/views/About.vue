@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       tableData: [],
-      cardIndex: [30],
+      cardIndex: [],
       showXlsx: true,
       repeat: true
     }
