@@ -27,7 +27,10 @@ export default {
       },
       Resolution: 1,
       rotate: false,
-      anstop: false
+      anstop: false,
+      createTime: 2000,//开始过场动画时间
+      spheresTime: 1500,//球型动画时间
+      tablesTime: 1500 //表格型动画时间
     }
   },
   props: {
@@ -106,7 +109,7 @@ export default {
       this.controls.minDistance = 500
       this.controls.maxDistance = 6000
       this.controls.addEventListener('change', this.render)
-      this.transform(this.targets.table, 5000)
+      this.transform(this.targets.table, this.createTime)
     },
     // 创建元素函数
     createCard(cardList) {
@@ -132,6 +135,7 @@ export default {
       }
     },
     transform(targets, duration) {
+      this.anstop = true
       TWEEN.removeAll()
       for (var i = 0; i < this.objects.length; i++) {
         var object = this.objects[i]
@@ -167,6 +171,7 @@ export default {
           if (this.rotate) {
             this.rotateBall()
           }
+          this.anstop = false
         })
     },
     onWindowResize() {
@@ -183,6 +188,7 @@ export default {
     render() {
       this.renderer.render(this.scene, this.camera)
     },
+    // 旋转函数
     rotateBall() {
       return new Promise((resolve) => {
         this.scene.rotation.y = 0
@@ -258,6 +264,10 @@ export default {
         .start()
         .onComplete(() => {
           // 动画结束后可以操作
+          if (this.rotate) {
+            this.selectedCardIndex = []
+            this.rotateBall()
+          }
         })
     },
     // 复位函数
@@ -290,39 +300,51 @@ export default {
           .easing(TWEEN.Easing.Exponential.InOut)
           .start()
       })
-      return new Promise((resolve) => {
-        new TWEEN.Tween(this)
-          .to({}, duration * 2)
-          .onUpdate(this.render)
-          .start()
-          .onComplete(() => {
-            this.selectedCardIndex.forEach((index) => {
-              const object = this.objects[index]
-              object.element.classList.remove('prize')
-            })
-            resolve()
+      new TWEEN.Tween(this)
+        .to({}, duration * 2)
+        .onUpdate(this.render)
+        .start()
+        .onComplete(() => {
+          this.selectedCardIndex.forEach((index) => {
+            const object = this.objects[index]
+            object.element.classList.remove('prize')
           })
-      })
+          this.rotateBall()
+        })
     },
     // 显示表单形状
     tables() {
+      if (this.anstop) {
+        this.$message({
+          message: '请勿多次点击！',
+          type: 'warning'
+        });
+        return false
+      }
       this.rotate = false
-      this.transform(this.targets.table, 2000)
+      this.transform(this.targets.table, this.tablesTime)
     },
-    // 显示形状
+    // 球型显示形状
     spheres() {
-      this.rotate = true
-      this.transform(this.targets.sphere, 2000)
+      if (this.anstop) {
+        this.$message({
+          message: '请勿多次点击！',
+          type: 'warning'
+        });
+        return false
+      }
+      if (this.selectedCardIndex.length != 0) {
+        this.resetCard()
+      } else {
+        this.rotate = true
+        this.transform(this.targets.sphere, this.spheresTime)
+      }
     },
     // 停止转动
     stops() {
       this.rotateObj.stop()
       this.selectCard()
     },
-    // 复位
-    resets() {
-      this.resetCard()
-    }
   }
 }
 </script>
