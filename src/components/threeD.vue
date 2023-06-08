@@ -47,6 +47,9 @@ export default {
   watch: {
     selectedCardIndex(value) {
       this.stops()
+    },
+    table(newv ,oldV){
+      this.createdThree()
     }
   },
   mounted() {
