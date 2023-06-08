@@ -497,13 +497,17 @@ export default {
         this.cardIndex = [Math.round((Math.random()*this.tableData.length))]
       } else {
         if(this.tableData.length === 0) {
-          that.$message({
+          this.$message({
             message: '没有更多数据',
             type: 'warning'
           });
         } else {
-          this.cardIndex = [Math.round((Math.random()*this.tableData.length))]
-          this.tableData.splice(this.cardIndex - 1,1)
+          var cardNum = Math.round((Math.random()*this.tableData.length))
+          this.cardIndex = [cardNum]
+          console.log(cardNum);
+          console.log(this.tableData[cardNum]);
+          this.tableData.splice(cardNum,1)
+          console.log(this.tableData);
         }
       }
       // this.stops()
