@@ -495,7 +495,7 @@ export default {
     lotteryNameStopEvt() {
       // repeat是否可重复抽取
       if(this.repeat) {
-        this.cardIndex = [Math.floor((Math.random()*this.tableData.length))]
+        this.cardIndex = [Math.round((Math.random()*this.tableData.length))]
         console.log(this.cardIndex);
       } else {
         if(this.tableData.length === 0) {
@@ -504,7 +504,7 @@ export default {
             type: 'warning'
           });
         } else {
-          this.cardIndex = [Math.floor((Math.random()*this.tableData.length))]
+          this.cardIndex = [Math.round((Math.random()*this.tableData.length))]
           this.tableData.splice(this.cardIndex - 1,1)
         }
       }
