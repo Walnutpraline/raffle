@@ -17,9 +17,13 @@
         <el-switch v-model="repeat">
         </el-switch>
       </div>
-      <el-button type="primary" @click="start">开始抽奖</el-button>
-      <el-button type="primary" @click="lotteryNameEvt">随机抽取名字</el-button>
-      <el-button type="primary" @click="lotteryNameStopEvt">停止</el-button>
+      <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
+      <el-button type="primary" @click="drawQuestionEvt">抽取题目</el-button>
+      <el-button type="primary" @click="drawPrizeEvt">抽取奖品</el-button>
+    </div>
+    <div class="startEnd">
+      <el-button type="primary" @click="startLotteryEvt">开始抽奖</el-button>
+      <el-button type="primary" @click="endLotteryEvt">停止</el-button>
     </div>
     <Threed ref="threed" :table="tableData" :selectedCardIndex="cardIndex" />
   </div>
@@ -59,7 +63,8 @@ export default {
       }],
       cardIndex: [],
       showXlsx: true,
-      repeat: true
+      repeat: true,
+      lotteryDrawData:[]
     }
   },
   created() {
@@ -77,8 +82,20 @@ export default {
   mounted() {
   },
   methods: {
-    start() {
-      this.$refs.threed.createdThree()
+    // 抽取姓名
+    drawNameEvt() {
+      this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
+      this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
+    },
+    // 抽取题目
+    drawQuestionEvt() {
+      this.tableData = this.fromdata(JSON.parse(localStorage.getItem('questionData')))
+      this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
+    },
+    // 抽取奖品
+    drawPrizeEvt() {
+      this.tableData = this.fromdata(JSON.parse(localStorage.getItem('prizeData')))
+      this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
     tables() {
       this.$refs.threed.tables()
@@ -96,33 +113,53 @@ export default {
     getMyExcelData(data) {
       // 上传表格
       let newArr = []
-      data.forEach(it => {
-        newArr.push(it.name)
-      });
-      localStorage.setItem('nameData', JSON.stringify(newArr))
-      this.tableData = this.fromdata(newArr)
+      var keys = Object.keys(data[0])[0];
+      if(keys == 'name') {
+        data.forEach(it => {
+          newArr.push(it.name)
+        });
+        localStorage.setItem('nameData', JSON.stringify(newArr))
+      }else if(keys == 'prize') {
+        data.forEach(it => {
+          newArr.push(it.prize)
+        });
+        localStorage.setItem('prizeData', JSON.stringify(newArr))
+      }else if(keys == 'question') {
+        data.forEach(it => {
+          newArr.push(it.question)
+        });
+        localStorage.setItem('questionData', JSON.stringify(newArr))
+      }
     },
 
-    // 随机抽取姓名
-    lotteryNameEvt() {
+    // 开始抽奖
+    startLotteryEvt() {
+      if(this.lotteryDrawData.length == 0) {
+        this.$message({
+          message: '没有更多数据',
+          type: 'warning'
+        });
+        return
+      }
       this.spheres()
     },
 
     // 停止抽取
-    lotteryNameStopEvt() {
+    endLotteryEvt() {
       // repeat是否可重复抽取
       if (this.repeat) {
-        this.cardIndex = [Math.round((Math.random() * this.tableData.length))]
+        this.cardIndex = [Math.round((Math.random() * (this.tableData.length - 1)))]
       } else {
-        if (this.tableData.length === 0) {
-          that.$message({
-            message: '没有更多数据',
-            type: 'warning'
-          });
-        } else {
-          this.cardIndex = [Math.round((Math.random() * this.tableData.length))]
-          this.tableData.splice(this.cardIndex - 1, 1)
-        }
+        // 抽取随机数
+        var cardNum = Math.round((Math.random() * (this.lotteryDrawData.length - 1)))
+        // 通过名字池里的名字去tabData数组里面，匹配下标
+        var tableDataIndex = this.tableData.findIndex(it=>{
+          return it.name == this.lotteryDrawData[cardNum].name
+        })
+        // 通过下标，展示抽中卡片
+        this.cardIndex = [tableDataIndex]
+        // 删除名字池选中的名字
+        this.lotteryDrawData = JSON.parse(JSON.stringify(this.lotteryDrawData.filter((item) => item != this.lotteryDrawData[cardNum])))
       }
       // this.stops()
     },
@@ -214,6 +251,13 @@ export default {
       display: flex;
       justify-content: space-between;
     }
+  }
+
+  .startEnd {
+    position: absolute;
+    z-index: 20;
+    left: 32px;
+    bottom: 80px;
   }
 }
 </style>

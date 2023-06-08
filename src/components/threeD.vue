@@ -47,11 +47,12 @@ export default {
     }
   },
   watch: {
-    selectedCardIndex(newv) {
-      if (newv.length > 0) {
-        this.stops()
-      }
+    selectedCardIndex(value) {
+      this.stops()
     },
+    table(newv ,oldV){
+      this.createdThree()
+    }
   },
   mounted() {
   },
