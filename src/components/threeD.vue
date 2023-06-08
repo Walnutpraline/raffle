@@ -26,6 +26,8 @@ export default {
         grid: []
       },
       Resolution: 1,
+      rotate: false,
+      anstop: false
     }
   },
   props: {
@@ -159,6 +161,9 @@ export default {
         .onUpdate(this.render)
         .start()
         .onComplete(() => {
+          if (this.rotate) {
+            this.rotateBall()
+          }
         })
     },
     onWindowResize() {
@@ -298,15 +303,13 @@ export default {
     },
     // 显示表单形状
     tables() {
+      this.rotate = false
       this.transform(this.targets.table, 2000)
     },
     // 显示形状
     spheres() {
+      this.rotate = true
       this.transform(this.targets.sphere, 2000)
-    },
-    // 转动
-    lotterys() {
-      this.rotateBall()
     },
     // 停止转动
     stops() {
