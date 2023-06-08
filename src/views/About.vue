@@ -117,6 +117,13 @@ export default {
 
     // 开始抽奖
     startLotteryEvt() {
+      if(this.lotteryDrawData.length == 0) {
+        this.$message({
+          message: '没有更多数据',
+          type: 'warning'
+        });
+        return
+      }
       this.spheres()
     },
 
@@ -124,14 +131,18 @@ export default {
     endLotteryEvt() {
       // repeat是否可重复抽取
       if (this.repeat) {
-        this.cardIndex = [Math.round((Math.random() * (this.lotteryDrawData.length - 1)))]
+        this.cardIndex = [Math.round((Math.random() * (this.tableData.length - 1)))]
       } else {
+        // 抽取随机数
         var cardNum = Math.round((Math.random() * (this.lotteryDrawData.length - 1)))
-        this.cardIndex = [cardNum]
-        console.log(cardNum);
-        console.log(this.lotteryDrawData[cardNum]);
-        this.lotteryDrawData.splice(cardNum,1)
-        console.log(this.lotteryDrawData);
+        // 通过名字池里的名字去tabData数组里面，匹配下标
+        var tableDataIndex = this.tableData.findIndex(it=>{
+          return it.name == this.lotteryDrawData[cardNum].name
+        })
+        // 通过下标，展示抽中卡片
+        this.cardIndex = [tableDataIndex]
+        // 删除名字池选中的名字
+        this.lotteryDrawData = JSON.parse(JSON.stringify(this.lotteryDrawData.filter((item) => item != this.lotteryDrawData[cardNum])))
       }
       // this.stops()
     },
