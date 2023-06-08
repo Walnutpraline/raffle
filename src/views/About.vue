@@ -25,7 +25,7 @@
       <el-button type="primary" @click="startLotteryEvt">开始抽奖</el-button>
       <el-button type="primary" @click="endLotteryEvt">停止</el-button>
     </div>
-    <Threed ref="threed" :table="tableData" :selectedCardIndex="cardIndex" />
+    <Threed ref="threed" :table="tableData" :selectedCardIndex="cardIndex" :problem="problems" />
   </div>
 </template>
 
@@ -64,7 +64,8 @@ export default {
       cardIndex: [],
       showXlsx: true,
       repeat: true,
-      lotteryDrawData:[]
+      lotteryDrawData: [],
+      problems: false
     }
   },
   created() {
@@ -84,16 +85,21 @@ export default {
   methods: {
     // 抽取姓名
     drawNameEvt() {
+      this.cardIndex = []
+      this.problems = false
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
     // 抽取题目
     drawQuestionEvt() {
+      this.cardIndex = []
+      this.problems = true
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('questionData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
     // 抽取奖品
     drawPrizeEvt() {
+      this.cardIndex = []
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('prizeData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
@@ -114,17 +120,17 @@ export default {
       // 上传表格
       let newArr = []
       var keys = Object.keys(data[0])[0];
-      if(keys == 'name') {
+      if (keys == 'name') {
         data.forEach(it => {
           newArr.push(it.name)
         });
         localStorage.setItem('nameData', JSON.stringify(newArr))
-      }else if(keys == 'prize') {
+      } else if (keys == 'prize') {
         data.forEach(it => {
           newArr.push(it.prize)
         });
         localStorage.setItem('prizeData', JSON.stringify(newArr))
-      }else if(keys == 'question') {
+      } else if (keys == 'question') {
         data.forEach(it => {
           newArr.push(it.question)
         });
@@ -134,7 +140,7 @@ export default {
 
     // 开始抽奖
     startLotteryEvt() {
-      if(this.lotteryDrawData.length == 0) {
+      if (this.lotteryDrawData.length == 0) {
         this.$message({
           message: '没有更多数据',
           type: 'warning'
@@ -153,7 +159,7 @@ export default {
         // 抽取随机数
         var cardNum = Math.round((Math.random() * (this.lotteryDrawData.length - 1)))
         // 通过名字池里的名字去tabData数组里面，匹配下标
-        var tableDataIndex = this.tableData.findIndex(it=>{
+        var tableDataIndex = this.tableData.findIndex(it => {
           return it.name == this.lotteryDrawData[cardNum].name
         })
         // 通过下标，展示抽中卡片
@@ -176,19 +182,35 @@ export default {
         if (list.length < 200) {
           for (let i = 0; i < 200; i++) {
             if (xNum < 11) {
-              data.push({
-                name: list[i] || "?",
-                x: xNum,
-                y: yNum
-              })
+              if (this.problems) {
+                data.push({
+                  name: 'A' + i,
+                  x: xNum,
+                  y: yNum
+                })
+              } else {
+                data.push({
+                  name: list[i] || "?",
+                  x: xNum,
+                  y: yNum
+                })
+              }
             } else {
               yNum++
               xNum = 1
-              data.push({
-                name: list[i] || "?",
-                x: xNum,
-                y: yNum
-              })
+              if (this.problems) {
+                data.push({
+                  name: 'A' + i,
+                  x: xNum,
+                  y: yNum
+                })
+              } else {
+                data.push({
+                  name: list[i] || "?",
+                  x: xNum,
+                  y: yNum
+                })
+              }
             }
             xNum++
           }

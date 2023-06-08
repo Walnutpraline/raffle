@@ -29,7 +29,6 @@ export default {
       createTime: 2000,//开始过场动画时间
       spheresTime: 1500,//球型动画时间
       tablesTime: 1500, //表格型动画时间
-      problem: true
     }
   },
   props: {
@@ -44,13 +43,21 @@ export default {
       default() {
         return []
       }
+    },
+    problem: {
+      type: Boolean,
+      default() {
+        return false
+      }
     }
   },
   watch: {
     selectedCardIndex(value) {
-      this.stops()
+      if (value.length > 0) {
+        this.stops()
+      }
     },
-    table(newv ,oldV){
+    table(newv, oldV) {
       this.createdThree()
     }
   },
@@ -58,6 +65,17 @@ export default {
   },
   methods: {
     createdThree() {
+      this.rotateOb = ''
+      this.camera = ''
+      this.scene = ''
+      this.renderer = ''
+      this.controls = ''
+      this.objects = []
+      this.targets = {
+        table: [],
+        sphere: []
+      },
+        this.Resolution = 1
       this.init()
       this.animate()
     },
@@ -355,7 +373,6 @@ export default {
         this.resetCard()
       } else {
         this.rotate = true
-        console.log('spheres')
         this.transform(this.targets.sphere, this.spheresTime)
       }
     },
