@@ -43,15 +43,14 @@ export default {
     }
   },
   created() {
-    if (JSON.parse(localStorage.getItem('nameData')) == null) {
-      this.$message({
-        message: '请先上传表格数据！',
-        type: 'warning'
-      });
-      return
-    }
-    this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
-
+    // if (JSON.parse(localStorage.getItem('nameData')) == null) {
+    //   this.$message({
+    //     message: '请先上传表格数据！',
+    //     type: 'warning'
+    //   });
+    //   return
+    // }
+    // this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
   },
   watch: {
   },
@@ -84,12 +83,12 @@ export default {
         newArr.push(it.name)
       });
       localStorage.setItem('nameData', JSON.stringify(newArr))
+      this.tableData = this.fromdata(newArr)
     },
 
     // 随机抽取姓名
     lotteryNameEvt() {
       this.spheres()
-      this.lotterys()
     },
 
     // 停止抽取
