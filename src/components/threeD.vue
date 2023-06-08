@@ -22,15 +22,14 @@ export default {
       targets: {
         table: [],
         sphere: [],
-        helix: [],
-        grid: []
       },
       Resolution: 1,
       rotate: false,
       anstop: false,
       createTime: 2000,//开始过场动画时间
       spheresTime: 1500,//球型动画时间
-      tablesTime: 1500 //表格型动画时间
+      tablesTime: 1500, //表格型动画时间
+      problem: true
     }
   },
   props: {
@@ -48,9 +47,11 @@ export default {
     }
   },
   watch: {
-    selectedCardIndex(value) {
-      this.stops()
-    }
+    selectedCardIndex(newv) {
+      if (newv.length > 0) {
+        this.stops()
+      }
+    },
   },
   mounted() {
   },
@@ -112,17 +113,36 @@ export default {
     createCard(cardList) {
       // 销毁 div 标签下的所有子节点
       document.getElementById('container').innerHTML = "";
-      for (let i = 0; i < cardList.length; i++) {
+      let num = cardList.length
+      let that = this
+      for (let i = 0; i < num; i++) {
         // 创建父元素
         var element = document.createElement('div')
         element.className = 'element'
         element.style.backgroundColor =
           'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
         // 创建子元素
-        var symbol = document.createElement('span')
+        var symbol
+        symbol = document.createElement('span')
         symbol.className = 'symbol'
         symbol.textContent = cardList[i].name
         element.appendChild(symbol)
+        if (this.problem) {
+          let showPro = document.createElement('span')
+          showPro.className = 'problem'
+          showPro.textContent = '题目'
+          showPro.onclick = function () {
+            that.showProblem()
+          }
+          element.appendChild(showPro)
+          let answer = document.createElement('span')
+          answer.className = 'answer'
+          answer.textContent = '答案'
+          answer.onclick = function () {
+            that.showAnswer()
+          }
+          element.appendChild(answer)
+        }
         var object = new THREE.CSS3DObject(element)
         object.position.x = Math.random() * 4000 - 2000
         object.position.y = Math.random() * 4000 - 2000
@@ -195,7 +215,7 @@ export default {
             {
               y: Math.PI * 6 * 1000
             },
-            3000 * 1000
+            1200 * 1000
           )
           .onUpdate(this.render)
           // .easing(TWEEN.Easing.Linear)
@@ -334,6 +354,7 @@ export default {
         this.resetCard()
       } else {
         this.rotate = true
+        console.log('spheres')
         this.transform(this.targets.sphere, this.spheresTime)
       }
     },
@@ -342,6 +363,14 @@ export default {
       this.rotateObj.stop()
       this.selectCard()
     },
+    // 显示题目
+    showProblem() {
+      console.log('showProblem')
+    },
+    // 显示答案
+    showAnswer() {
+      console.log('showAnswer')
+    }
   }
 }
 </script>
@@ -355,6 +384,11 @@ export default {
   line-height: 80px;
 
   .symbol {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
     position: absolute;
     top: 40px;
     left: 0px;
@@ -364,6 +398,28 @@ export default {
     color: rgba(255, 255, 255, 0.75);
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.95);
     font-size: 42px;
+  }
+
+  .problem {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 32px;
+    position: absolute;
+    top: 95px;
+    left: -10px;
+    right: 0px;
+    cursor: pointer;
+    display: inline-block;
+    width: 100px;
+  }
+
+  .answer {
+    width: 100px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 32px;
+    position: absolute;
+    top: 95px;
+    cursor: pointer;
+    display: inline-block;
   }
 }
 

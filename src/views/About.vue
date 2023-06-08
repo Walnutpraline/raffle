@@ -36,7 +36,27 @@ export default {
   },
   data() {
     return {
-      tableData: [],
+      tableData: [{
+        name: "A1",
+        x: 1,
+        y: 1
+      }, {
+        name: "A2",
+        x: 1,
+        y: 2
+      }, {
+        name: "A3",
+        x: 1,
+        y: 3
+      }, {
+        name: "A4",
+        x: 1,
+        y: 4
+      }, {
+        name: "A5",
+        x: 1,
+        y: 5
+      }],
       cardIndex: [],
       showXlsx: true,
       repeat: true
@@ -69,9 +89,6 @@ export default {
     lotterys() {
       this.$refs.threed.lotterys()
     },
-    // stops() {
-    //   this.$refs.threed.stops()
-    // },
     resets() {
       this.$refs.threed.resets()
     },
@@ -119,24 +136,45 @@ export default {
       let xNum = 1
       let yNum = 1
       if (list instanceof Array) {
-        list.map((value, index) => {
-          if (xNum < 11) {
-            data.push({
-              name: value,
-              x: xNum,
-              y: yNum
-            })
-          } else {
-            yNum++
-            xNum = 1
-            data.push({
-              name: value,
-              x: xNum,
-              y: yNum
-            })
+        if (list.length < 200) {
+          for (let i = 0; i < 200; i++) {
+            if (xNum < 11) {
+              data.push({
+                name: list[i] || "?",
+                x: xNum,
+                y: yNum
+              })
+            } else {
+              yNum++
+              xNum = 1
+              data.push({
+                name: list[i] || "?",
+                x: xNum,
+                y: yNum
+              })
+            }
+            xNum++
           }
-          xNum++
-        })
+        } else {
+          list.map((value, index) => {
+            if (xNum < 11) {
+              data.push({
+                name: value,
+                x: xNum,
+                y: yNum
+              })
+            } else {
+              yNum++
+              xNum = 1
+              data.push({
+                name: value,
+                x: xNum,
+                y: yNum
+              })
+            }
+            xNum++
+          })
+        }
         return data
       } else {
         this.$message({
