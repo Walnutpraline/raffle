@@ -4,7 +4,6 @@
       <button @click="tables">TABLE</button>
       <button @click="spheres">SPHERE</button>
       <button @click="lotterys">转动</button>
-      <button @click="stops">停止</button>
       <button @click="resets">复位</button>
     </div>
     <div class="upload">
@@ -469,9 +468,9 @@ export default {
     lotterys() {
       this.$refs.threed.lotterys()
     },
-    stops() {
-      this.$refs.threed.stops()
-    },
+    // stops() {
+    //   this.$refs.threed.stops()
+    // },
     resets() {
       this.$refs.threed.resets()
     },
@@ -496,7 +495,6 @@ export default {
       // repeat是否可重复抽取
       if(this.repeat) {
         this.cardIndex = [Math.round((Math.random()*this.tableData.length))]
-        console.log(this.cardIndex);
       } else {
         if(this.tableData.length === 0) {
           that.$message({
@@ -508,7 +506,7 @@ export default {
           this.tableData.splice(this.cardIndex - 1,1)
         }
       }
-      this.stops()
+      // this.stops()
     },
     
     // 数据格式化

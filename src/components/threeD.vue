@@ -11,7 +11,7 @@ import '../utils/CSS3DRenderer'
 import '../utils/TrackballControls'
 export default {
   name: 'threeD',
-  data () {
+  data() {
     return {
       rotateOb: '',
       camera: '',
@@ -31,23 +31,28 @@ export default {
   props: {
     table: {
       type: Array,
-      default () {
+      default() {
         return []
       }
     },
     selectedCardIndex: {
       type: Array,
-      default () {
+      default() {
         return []
       }
     }
   },
-  mounted () {
+  watch: {
+    selectedCardIndex(value) {
+      this.stops()
+    }
+  },
+  mounted() {
     this.init()
     this.animate()
   },
   methods: {
-    init () {
+    init() {
       this.camera = new THREE.PerspectiveCamera(
         40,
         window.innerWidth / window.innerHeight,
@@ -97,13 +102,13 @@ export default {
       this.transform(this.targets.table, 5000)
     },
     // 创建元素函数
-    createCard (cardList) {
+    createCard(cardList) {
       for (let i = 0; i < cardList.length; i++) {
         // 创建父元素
         var element = document.createElement('div')
         element.className = 'element'
         element.style.backgroundColor =
-        'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
+          'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
         // 创建子元素
         var symbol = document.createElement('span')
         symbol.className = 'symbol'
@@ -117,7 +122,7 @@ export default {
         this.objects.push(object)
       }
     },
-    transform (targets, duration) {
+    transform(targets, duration) {
       TWEEN.removeAll()
       for (var i = 0; i < this.objects.length; i++) {
         var object = this.objects[i]
@@ -149,22 +154,24 @@ export default {
         .to({}, duration * 2)
         .onUpdate(this.render)
         .start()
+        .onComplete(() => {
+        })
     },
-    onWindowResize () {
+    onWindowResize() {
       this.camera.aspect = window.innerWidth / window.innerHeight
       this.camera.updateProjectionMatrix()
       this.render.setSize(window.innerWidth, window.innerHeight)
       this.render()
     },
-    animate () {
+    animate() {
       requestAnimationFrame(this.animate)
       TWEEN.update()
       this.controls.update()
     },
-    render () {
+    render() {
       this.renderer.render(this.scene, this.camera)
     },
-    rotateBall () {
+    rotateBall() {
       return new Promise((resolve) => {
         this.scene.rotation.y = 0
         this.rotateObj = new TWEEN.Tween(this.scene.rotation)
@@ -188,12 +195,12 @@ export default {
       })
     },
     // 卡牌样式改变
-    changeCard (cardIndex, color) {
+    changeCard(cardIndex, color) {
       const card = this.objects[cardIndex].element
       card.style.backgroundColor =
-      color || 'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
+        color || 'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
     },
-    selectCard (duration = 600) {
+    selectCard(duration = 600) {
       this.rotate = false
       const width = 240
       let tag = 0 //控制中将卡牌位置
@@ -242,7 +249,7 @@ export default {
         })
     },
     // 复位函数
-    resetCard () {
+    resetCard() {
       const duration = 600
       this.selectedCardIndex.forEach((index) => {
         this.changeCard(index)
@@ -286,25 +293,24 @@ export default {
       })
     },
     // 显示表单形状
-    tables () {
+    tables() {
       this.transform(this.targets.table, 2000)
     },
     // 显示形状
-    spheres () {
+    spheres() {
       this.transform(this.targets.sphere, 2000)
     },
     // 转动
-    lotterys () {
+    lotterys() {
       this.rotateBall()
     },
     // 停止转动
-    stops () {
-      this.selectedCardIndex = [40]
+    stops() {
       this.rotateObj.stop()
       this.selectCard()
     },
     // 复位
-    resets () {
+    resets() {
       this.resetCard()
     }
   }
@@ -318,6 +324,7 @@ export default {
   box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
   border: 1px solid rgba(127, 255, 255, 0.25);
   line-height: 80px;
+
   .symbol {
     position: absolute;
     top: 40px;
@@ -331,7 +338,7 @@ export default {
   }
 }
 
-.num{
+.num {
   position: fixed;
   z-index: 20;
 }
