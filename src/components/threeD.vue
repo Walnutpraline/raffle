@@ -432,7 +432,7 @@ export default {
     color: rgba(255, 255, 255, 0.75);
     font-size: 32px;
     position: absolute;
-    top: 95px;
+    top: 110px;
     left: -5px;
     right: 0px;
     cursor: pointer;
@@ -445,10 +445,15 @@ export default {
     color: rgba(255, 255, 255, 0.75);
     font-size: 32px;
     position: absolute;
-    top: 95px;
+    top: 110px;
     right: 0px;
     cursor: pointer;
     display: inline-block;
   }
+}
+
+.num {
+  position: fixed;
+  z-index: 20;
 }
 </style>

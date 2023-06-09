@@ -173,12 +173,6 @@ export default {
         this.lotteryDrawData = JSON.parse(JSON.stringify(this.lotteryDrawData.filter((item) => item != this.lotteryDrawData[cardNum])))
       }
       this.setHistory("name", "0", "周军")
-      this.setHistory("question", "0", "A1")
-      this.setHistory("prize", "0", "iPhone15Pro")
-      this.setHistory("name", "1", "周军2")
-      this.setHistory("question", "1", "A2")
-      this.setHistory("prize", "1", "iPhone14")
-      this.setHistory("prize", "2", "iPhone15")
     },
     // 数据格式化
     fromdataList(list) {
@@ -194,7 +188,7 @@ export default {
             if (xNum < 11) {
               if (this.problems) {
                 data.push({
-                  name: 'A' + i,
+                  name: 'A' + (i + 1),
                   x: xNum,
                   y: yNum
                 })
@@ -210,7 +204,7 @@ export default {
               xNum = 1
               if (this.problems) {
                 data.push({
-                  name: 'A' + i,
+                  name: 'A' + (i + 1),
                   x: xNum,
                   y: yNum
                 })
@@ -227,19 +221,35 @@ export default {
         } else {
           list.map((value, index) => {
             if (xNum < 11) {
-              data.push({
-                name: value,
-                x: xNum,
-                y: yNum
-              })
+              if (this.problems) {
+                data.push({
+                  name: 'A' + (index + 1),
+                  x: xNum,
+                  y: yNum
+                })
+              } else {
+                data.push({
+                  name: value,
+                  x: xNum,
+                  y: yNum
+                })
+              }
             } else {
               yNum++
               xNum = 1
-              data.push({
-                name: value,
-                x: xNum,
-                y: yNum
-              })
+              if (this.problems) {
+                data.push({
+                  name: 'A' + (index + 1),
+                  x: xNum,
+                  y: yNum
+                })
+              } else {
+                data.push({
+                  name: value,
+                  x: xNum,
+                  y: yNum
+                })
+              }
             }
             xNum++
           })
@@ -304,6 +314,14 @@ export default {
     },
     animateStop() {
       console.log("animateStop")
+    },
+    // 历史记录
+    setHistory(type, index, value) {
+      let history = JSON.parse(localStorage.getItem('history')) || []
+      let json = history[Number(index)] || {}
+      json[type] = value
+      history[Number(index)] = json
+      localStorage.setItem('history', JSON.stringify(history))
     }
   }
 }
