@@ -403,7 +403,6 @@ export default {
   box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
   border: 1px solid rgba(127, 255, 255, 0.25);
   line-height: 80px;
-
   .symbol {
     display: inline-block;
     overflow: hidden;
@@ -442,10 +441,5 @@ export default {
     cursor: pointer;
     display: inline-block;
   }
-}
-
-.num {
-  position: fixed;
-  z-index: 20;
 }
 </style>

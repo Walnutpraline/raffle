@@ -1,22 +1,32 @@
 <template>
   <div class="about">
-    <div class="title">
-      <div>随机抽奖</div>
+    <div class="titleBox">
+      {{title}}
     </div>
-    <div class="upload">
-      <el-switch v-model="showXlsx">
-      </el-switch>
-      <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
-    </div>
+    
     <div class="lotteryDraw">
+      <!-- <div class="upload">
+        <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
+        <el-switch v-model="showXlsx">
+        </el-switch>
+      </div> -->
       <div class="repeatBox">
         <div>抽取是否可重复</div>
         <el-switch v-model="repeat">
         </el-switch>
       </div>
-      <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
-      <el-button type="primary" @click="drawQuestionEvt">抽取题目</el-button>
-      <el-button type="primary" @click="drawPrizeEvt">抽取奖品</el-button>
+      <div>
+        <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
+      </div>
+      <div>
+        <el-button type="primary" @click="drawQuestionEvt">抽取题目</el-button>
+      </div>
+      <div>
+        <el-button type="primary" @click="drawPrizeEvt">抽取奖品</el-button>
+      </div>
+      <div>
+        <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
+      </div>
     </div>
     <div class="startEnd">
       <el-button type="primary" @click="startLotteryEvt">开始抽奖</el-button>
@@ -64,7 +74,8 @@ export default {
       repeat: true,
       lotteryDrawData: [],
       problems: false,
-      tableDataList: []
+      tableDataList: [],
+      title:''
     }
   },
   created() {
@@ -75,7 +86,8 @@ export default {
     //   });
     //   return
     // }
-    // this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
+    // this.tableData = JSON.parse(JSON.stringify(this.fromdata(JSON.parse(localStorage.getItem('nameData')))))
+    this.title = JSON.parse(localStorage.getItem('title'))
   },
   watch: {
   },
@@ -123,6 +135,7 @@ export default {
       // 上传表格
       let newArr = []
       var keys = Object.keys(data[0])[0];
+      console.log(keys);
       if (keys == 'name') {
         data.forEach(it => {
           newArr.push(it.name)
@@ -138,6 +151,10 @@ export default {
           newArr.push(it.question)
         });
         localStorage.setItem('questionData', JSON.stringify(newArr))
+      } else if (keys == 'title') {
+        data.forEach(it => {
+          localStorage.setItem('title', JSON.stringify(it.title))
+        });
       }
     },
 
@@ -302,26 +319,32 @@ export default {
 
 <style lang="scss">
 .about {
-  position: relative;
-  .title {
+  // position: relative;
+  .titleBox {
     position: absolute;
-    top: 0;
+    text-align: center;
+    top: 6px;
+    width: 100%;
     z-index: 20;
-  }
-
-  .upload {
-    position: absolute;
-    z-index: 20;
-    right: 0;
-    width: 188px;
-    height: 66px;
+    color: #fff;
   }
 
   .lotteryDraw {
+    height: 300px;
+    width: 180px;
     position: absolute;
     z-index: 20;
-    left: 32px;
-    top: 80px;
+    left: 6px;
+    top: 50px;
+    >div {
+      margin-top: 20px;
+    }
+
+    .upload {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
 
     .repeatBox {
       color: #fff;
@@ -334,7 +357,7 @@ export default {
   .startEnd {
     position: absolute;
     z-index: 20;
-    left: 32px;
+    left: 6px;
     bottom: 80px;
   }
 }
