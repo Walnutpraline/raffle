@@ -1,11 +1,11 @@
 <template>
   <div class="about">
-    <div class="num">
+    <!-- <div class="num">
       <button @click="tables">TABLE</button>
       <button @click="spheres">SPHERE</button>
       <button @click="lotterys">转动</button>
       <button @click="resets">复位</button>
-    </div>
+    </div> -->
     <div class="upload">
       <el-switch v-model="showXlsx">
       </el-switch>
@@ -172,7 +172,13 @@ export default {
         // 删除名字池选中的名字
         this.lotteryDrawData = JSON.parse(JSON.stringify(this.lotteryDrawData.filter((item) => item != this.lotteryDrawData[cardNum])))
       }
-      // this.stops()
+      this.setHistory("name", "0", "周军")
+      this.setHistory("question", "0", "A1")
+      this.setHistory("prize", "0", "iPhone15Pro")
+      this.setHistory("name", "1", "周军2")
+      this.setHistory("question", "1", "A2")
+      this.setHistory("prize", "1", "iPhone14")
+      this.setHistory("prize", "2", "iPhone15")
     },
     // 数据格式化
     fromdataList(list) {
@@ -183,8 +189,8 @@ export default {
       let xNum = 1
       let yNum = 1
       if (list instanceof Array) {
-        if (list.length < 200) {
-          for (let i = 0; i < 200; i++) {
+        if (list.length < 100) {
+          for (let i = 0; i < 100; i++) {
             if (xNum < 11) {
               if (this.problems) {
                 data.push({
@@ -298,6 +304,15 @@ export default {
     },
     animateStop() {
       console.log("animateStop")
+    },
+    // 历史记录
+    setHistory(type, index, value) {
+      let history = JSON.parse(localStorage.getItem('history')) || []
+      let json = history[Number(index)] || {}
+      json[type] = value
+      console.log(json)
+      history[index] = json
+      localStorage.setItem("history", JSON.stringify(history))
     }
   }
 }

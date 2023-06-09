@@ -74,8 +74,8 @@ export default {
       this.targets = {
         table: [],
         sphere: []
-      },
-        this.Resolution = 1
+      }
+      this.Resolution = 1
       this.init()
       this.animate()
     },
@@ -397,6 +397,11 @@ export default {
 </script>
 
 <style lang="scss">
+#container {
+  width: 100%;
+  height: 100%;
+}
+
 .element {
   width: 220px;
   height: 160px;
