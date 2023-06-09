@@ -25,7 +25,7 @@
       <el-button type="primary" @click="startLotteryEvt">开始抽奖</el-button>
       <el-button type="primary" @click="endLotteryEvt">停止</el-button>
     </div>
-    <Threed ref="threed" :table="tableData" :selectedCardIndex="cardIndex" :problem="problems" />
+    <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems" />
   </div>
 </template>
 
@@ -65,7 +65,8 @@ export default {
       showXlsx: true,
       repeat: true,
       lotteryDrawData: [],
-      problems: false
+      problems: false,
+      tableDataList:[]
     }
   },
   created() {
@@ -88,6 +89,7 @@ export default {
       this.cardIndex = [] //清空中奖
       this.problems = false //是否抽取题目
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
+      this.tableDataList= this.fromdataList(JSON.parse(localStorage.getItem('nameData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
     // 抽取题目
@@ -95,6 +97,7 @@ export default {
       this.cardIndex = []
       this.problems = true
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('questionData')))
+      this.tableDataList= this.fromdataList(JSON.parse(localStorage.getItem('questionData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
     // 抽取奖品
@@ -102,6 +105,7 @@ export default {
       this.cardIndex = []
       this.problems = false
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('prizeData')))
+      this.tableDataList= this.fromdataList(JSON.parse(localStorage.getItem('prizeData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
     tables() {
@@ -150,7 +154,6 @@ export default {
       }
       this.spheres()
     },
-
     // 停止抽取
     endLotteryEvt() {
       // repeat是否可重复抽取
@@ -170,9 +173,8 @@ export default {
       }
       // this.stops()
     },
-
     // 数据格式化
-    fromdata(list) {
+    fromdataList(list) {
       if (arguments.length == 0) {
         return false
       }
@@ -234,6 +236,56 @@ export default {
             }
             xNum++
           })
+        }
+        return data
+      } else {
+        this.$message({
+          message: '请导入数组类型数据',
+          type: 'warning'
+        });
+      }
+    },
+    fromdata(list) {
+      if (arguments.length == 0) {
+        return false
+      }
+      let data = []
+      let xNum = 1
+      let yNum = 1
+      if (list instanceof Array) {
+        for (let i = 0; i < list.length; i++) {
+          if (xNum < 11) {
+            if (this.problems) {
+              data.push({
+                name: 'A' + i,
+                x: xNum,
+                y: yNum
+              })
+            } else {
+              data.push({
+                name: list[i] || "?",
+                x: xNum,
+                y: yNum
+              })
+            }
+          } else {
+            yNum++
+            xNum = 1
+            if (this.problems) {
+              data.push({
+                name: 'A' + i,
+                x: xNum,
+                y: yNum
+              })
+            } else {
+              data.push({
+                name: list[i] || "?",
+                x: xNum,
+                y: yNum
+              })
+            }
+          }
+          xNum++
         }
         return data
       } else {
