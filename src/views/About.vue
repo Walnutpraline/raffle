@@ -1,9 +1,16 @@
 <template>
   <div class="about">
-    <div class="titleBox">
-      {{title}}
+    <!-- <div class="num">
+      <button @click="tables">TABLE</button>
+      <button @click="spheres">SPHERE</button>
+      <button @click="lotterys">转动</button>
+      <button @click="resets">复位</button>
+    </div> -->
+    <div class="upload">
+      <el-switch v-model="showXlsx">
+      </el-switch>
+      <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
     </div>
-    
     <div class="lotteryDraw">
       <!-- <div class="upload">
         <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
@@ -96,8 +103,7 @@ export default {
     //   });
     //   return
     // }
-    // this.tableData = JSON.parse(JSON.stringify(this.fromdata(JSON.parse(localStorage.getItem('nameData')))))
-    this.title = JSON.parse(localStorage.getItem('title'))
+    // this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
   },
   watch: {
   },
@@ -159,7 +165,6 @@ export default {
       console.log(data);
       let newArr = []
       var keys = Object.keys(data[0])[0];
-      console.log(keys);
       if (keys == 'name') {
         data.forEach(it => {
           newArr.push(it.name)
@@ -176,10 +181,6 @@ export default {
           newArr.push(it.question)
         });
         localStorage.setItem('questionData', JSON.stringify(newArr))
-      } else if (keys == 'title') {
-        data.forEach(it => {
-          localStorage.setItem('title', JSON.stringify(it.title))
-        });
       }
     },
 
@@ -211,7 +212,7 @@ export default {
         // 删除名字池选中的名字
         this.lotteryDrawData = JSON.parse(JSON.stringify(this.lotteryDrawData.filter((item) => item != this.lotteryDrawData[cardNum])))
       }
-      // this.stops()
+      this.setHistory("name", "0", "周军")
     },
     // 数据格式化
     fromdataList(list) {
@@ -227,7 +228,7 @@ export default {
             if (xNum < 11) {
               if (this.problems) {
                 data.push({
-                  name: 'A' + i,
+                  name: 'A' + (i + 1),
                   x: xNum,
                   y: yNum
                 })
@@ -243,7 +244,7 @@ export default {
               xNum = 1
               if (this.problems) {
                 data.push({
-                  name: 'A' + i,
+                  name: 'A' + (i + 1),
                   x: xNum,
                   y: yNum
                 })
@@ -260,19 +261,35 @@ export default {
         } else {
           list.map((value, index) => {
             if (xNum < 11) {
-              data.push({
-                name: value,
-                x: xNum,
-                y: yNum
-              })
+              if (this.problems) {
+                data.push({
+                  name: 'A' + (index + 1),
+                  x: xNum,
+                  y: yNum
+                })
+              } else {
+                data.push({
+                  name: value,
+                  x: xNum,
+                  y: yNum
+                })
+              }
             } else {
               yNum++
               xNum = 1
-              data.push({
-                name: value,
-                x: xNum,
-                y: yNum
-              })
+              if (this.problems) {
+                data.push({
+                  name: 'A' + (index + 1),
+                  x: xNum,
+                  y: yNum
+                })
+              } else {
+                data.push({
+                  name: value,
+                  x: xNum,
+                  y: yNum
+                })
+              }
             }
             xNum++
           })
@@ -337,6 +354,14 @@ export default {
     },
     animateStop() {
       console.log("animateStop")
+    },
+    // 历史记录
+    setHistory(type, index, value) {
+      let history = JSON.parse(localStorage.getItem('history')) || []
+      let json = history[Number(index)] || {}
+      json[type] = value
+      history[Number(index)] = json
+      localStorage.setItem('history', JSON.stringify(history))
     }
   }
 }
@@ -344,19 +369,20 @@ export default {
 
 <style lang="scss" scpoed>
 .about {
-  // position: relative;
-  .titleBox {
-    position: absolute;
-    text-align: center;
-    top: 6px;
-    width: 100%;
+  .num {
+    position: fixed;
     z-index: 20;
-    color: #fff;
+  }
+
+  .upload {
+    position: absolute;
+    z-index: 20;
+    right: 0;
+    width: 188px;
+    height: 66px;
   }
 
   .lotteryDraw {
-    height: 300px;
-    width: 180px;
     position: absolute;
     z-index: 20;
     left: 30px;
