@@ -1,10 +1,7 @@
 <template>
   <div class="about">
-    <div class="num">
-      <button @click="tables">TABLE</button>
-      <button @click="spheres">SPHERE</button>
-      <button @click="lotterys">转动</button>
-      <button @click="resets">复位</button>
+    <div class="title">
+      <div>随机抽奖</div>
     </div>
     <div class="upload">
       <el-switch v-model="showXlsx">
@@ -301,8 +298,10 @@ export default {
 
 <style lang="scss">
 .about {
-  .num {
-    position: fixed;
+  position: relative;
+  .title {
+    position: absolute;
+    top: 0;
     z-index: 20;
   }
 
