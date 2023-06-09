@@ -304,15 +304,6 @@ export default {
     },
     animateStop() {
       console.log("animateStop")
-    },
-    // 历史记录
-    setHistory(type, index, value) {
-      let history = JSON.parse(localStorage.getItem('history')) || []
-      let json = history[Number(index)] || {}
-      json[type] = value
-      console.log(json)
-      history[index] = json
-      localStorage.setItem("history", JSON.stringify(history))
     }
   }
 }

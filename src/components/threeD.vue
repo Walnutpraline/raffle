@@ -451,9 +451,4 @@ export default {
     display: inline-block;
   }
 }
-
-.num {
-  position: fixed;
-  z-index: 20;
-}
 </style>

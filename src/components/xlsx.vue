@@ -6,7 +6,7 @@
         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
         @change="exportData"
       />
-      <button @click="btnClick">上传表格</button>
+      <el-button type="primary" @click="btnClick">上传表格</el-button>
     </div>
   </template>
 
