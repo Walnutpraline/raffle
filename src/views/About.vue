@@ -10,13 +10,14 @@
         <el-switch v-model="showXlsx">
         </el-switch>
       </div> -->
-      <div class="repeatBox">
+      <!-- <div class="repeatBox">
         <div>抽取是否可重复</div>
-        <el-switch v-model="repeat">
-        </el-switch>
-      </div>
+        
+      </div> -->
       <div>
         <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
+        <el-switch v-model="repeat">
+        </el-switch>
       </div>
       <div>
         <el-button type="primary" @click="drawQuestionEvt">抽取题目</el-button>
@@ -33,7 +34,13 @@
       <el-button type="primary" @click="endLotteryEvt">停止</el-button>
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
-      @animateStop="animateStop" />
+      @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" />
+    <el-dialog
+      :visible.sync="showQuestion"
+      width="50%"
+      top="10%">
+      <span>{{questionAnswerStr}}</span>
+    </el-dialog>
   </div>
 </template>
 
@@ -75,7 +82,10 @@ export default {
       lotteryDrawData: [],
       problems: false,
       tableDataList: [],
-      title:''
+      title:'',
+      questionAnswer:[],
+      showQuestion:false,
+      questionAnswerStr:''
     }
   },
   created() {
@@ -118,6 +128,19 @@ export default {
       this.tableDataList = this.fromdataList(JSON.parse(localStorage.getItem('prizeData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
     },
+
+    // 展示题目,答案
+    showQuestionEvt(val) {
+      console.log(val);
+      // 展示题目弹框
+      this.showQuestion = val.show
+      // 当val里面的questionOrAnswer为0时，弹框展示问题，1代表弹框展示答案
+      if(val.questionOrAnswer == 0) {
+        this.questionAnswerStr = '题目题目题目,题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目'
+      } else {
+        this.questionAnswerStr = '答案答案答案，答案答案答案答案答案答案答案答案答案答案答案答案'
+      }
+    },
     tables() {
       this.$refs.threed.tables()
     },
@@ -133,6 +156,7 @@ export default {
 
     getMyExcelData(data) {
       // 上传表格
+      console.log(data);
       let newArr = []
       var keys = Object.keys(data[0])[0];
       console.log(keys);
@@ -147,6 +171,7 @@ export default {
         });
         localStorage.setItem('prizeData', JSON.stringify(newArr))
       } else if (keys == 'question') {
+        this.questionAnswer = data
         data.forEach(it => {
           newArr.push(it.question)
         });
@@ -197,8 +222,8 @@ export default {
       let xNum = 1
       let yNum = 1
       if (list instanceof Array) {
-        if (list.length < 200) {
-          for (let i = 0; i < 200; i++) {
+        if (list.length < 100) {
+          for (let i = 0; i < 100; i++) {
             if (xNum < 11) {
               if (this.problems) {
                 data.push({
@@ -317,7 +342,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scpoed>
 .about {
   // position: relative;
   .titleBox {
@@ -334,8 +359,9 @@ export default {
     width: 180px;
     position: absolute;
     z-index: 20;
-    left: 6px;
+    left: 30px;
     top: 50px;
+    text-align: left;
     >div {
       margin-top: 20px;
     }
@@ -346,19 +372,31 @@ export default {
       margin-bottom: 20px;
     }
 
-    .repeatBox {
-      color: #fff;
-      font-size: 16px;
-      display: flex;
-      justify-content: space-between;
-    }
+    // .repeatBox {
+    //   color: #fff;
+    //   font-size: 16px;
+    //   display: flex;
+    //   justify-content: space-between;
+    // }
   }
 
   .startEnd {
     position: absolute;
     z-index: 20;
-    left: 6px;
+    left: 30px;
     bottom: 80px;
+  }
+
+  .el-dialog__headerbtn {
+    top: 10px;
+    right: -10px;
+    background-color: unset;
+  }
+  .el-dialog__body {
+    padding: 10px 20px 20px 20px;
+  }
+  .el-dialog__close:hover {
+    color: #909399;
   }
 }
 </style>
