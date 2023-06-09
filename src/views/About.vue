@@ -194,7 +194,7 @@ export default {
                 })
               } else {
                 data.push({
-                  name: list[i] || "?",
+                  name: list[i] || " ",
                   x: xNum,
                   y: yNum
                 })
@@ -210,7 +210,7 @@ export default {
                 })
               } else {
                 data.push({
-                  name: list[i] || "?",
+                  name: list[i] || " ",
                   x: xNum,
                   y: yNum
                 })
