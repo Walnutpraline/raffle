@@ -198,6 +198,8 @@ export default {
           )
           .easing(TWEEN.Easing.Exponential.InOut)
           .start()
+          .onComplete(() => {
+          })
       }
       new TWEEN.Tween(this)
         .to({}, duration * 2)
@@ -208,6 +210,7 @@ export default {
             this.rotateBall()
           }
           this.anstop = false
+          this.$emit("animateStop")
         })
     },
     onWindowResize() {
