@@ -1,44 +1,29 @@
 <template>
   <div class="about">
-    <!-- <div class="num">
-      <button @click="tables">TABLE</button>
-      <button @click="spheres">SPHERE</button>
-      <button @click="lotterys">转动</button>
-      <button @click="resets">复位</button>
-    </div> -->
-    <div class="upload">
-      <el-switch v-model="showXlsx">
-      </el-switch>
-      <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
+    <div class="titleBox">
+      {{title}}
     </div>
-    <div class="lotteryDraw">
-      <!-- <div class="upload">
-        <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
-        <el-switch v-model="showXlsx">
-        </el-switch>
-      </div> -->
-      <!-- <div class="repeatBox">
-        <div>抽取是否可重复</div>
-        
-      </div> -->
-      <div>
-        <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
-        <el-switch v-model="repeat">
-        </el-switch>
+    <div class="leftArea">
+      <div class="lotteryDraw">
+        <div :class="selDrawName?'seldrawNameBox':'drawNameBox'">
+          <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
+          <el-switch active-color="rgba(0, 127, 127, 0.37)" v-model="repeat">
+          </el-switch>
+        </div>
+        <div :class="selDrawQuestion?'selDrawQuestionBox':'drawQuestionBox'">
+          <el-button type="primary" @click="drawQuestionEvt">抽取题目</el-button>
+        </div>
+        <div :class="selDrawPrize?'selDrawPrizeBox':'drawPrizeBox'" class="">
+          <el-button type="primary" @click="drawPrizeEvt">抽取奖品</el-button>
+        </div>
       </div>
-      <div>
-        <el-button type="primary" @click="drawQuestionEvt">抽取题目</el-button>
-      </div>
-      <div>
-        <el-button type="primary" @click="drawPrizeEvt">抽取奖品</el-button>
-      </div>
-      <div>
+      <div class="uploadBox">
         <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
       </div>
-    </div>
-    <div class="startEnd">
-      <el-button type="primary" @click="startLotteryEvt">开始抽奖</el-button>
-      <el-button type="primary" @click="endLotteryEvt">停止</el-button>
+      <div class="startEnd">
+        <el-button type="primary" @click="startLotteryEvt">开始抽奖</el-button>
+        <el-button type="primary" @click="endLotteryEvt">停止抽奖</el-button>
+      </div>
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
       @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" />
@@ -92,7 +77,10 @@ export default {
       title:'',
       questionAnswer:[],
       showQuestion:false,
-      questionAnswerStr:''
+      questionAnswerStr:'',
+      selDrawName: false,
+      selDrawQuestion: false,
+      selDrawPrize: false
     }
   },
   created() {
@@ -104,6 +92,7 @@ export default {
     //   return
     // }
     // this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
+    this.title = JSON.parse(localStorage.getItem('title'))
   },
   watch: {
   },
@@ -117,6 +106,11 @@ export default {
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
       this.tableDataList = this.fromdataList(JSON.parse(localStorage.getItem('nameData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
+
+      // 使用选中的样式，其他两项使用原样式
+      this.selDrawName = true
+      this.selDrawQuestion = false,
+      this.selDrawPrize = false
     },
     // 抽取题目
     drawQuestionEvt() {
@@ -125,6 +119,10 @@ export default {
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('questionData')))
       this.tableDataList = this.fromdataList(JSON.parse(localStorage.getItem('questionData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
+      // 使用选中的样式，其他两项使用原样式
+      this.selDrawName = false
+      this.selDrawQuestion = true,
+      this.selDrawPrize = false
     },
     // 抽取奖品
     drawPrizeEvt() {
@@ -133,6 +131,10 @@ export default {
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('prizeData')))
       this.tableDataList = this.fromdataList(JSON.parse(localStorage.getItem('prizeData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
+      // 使用选中的样式，其他两项使用原样式
+      this.selDrawName = false
+      this.selDrawQuestion = false,
+      this.selDrawPrize = true
     },
 
     // 展示题目,答案
@@ -181,6 +183,10 @@ export default {
           newArr.push(it.question)
         });
         localStorage.setItem('questionData', JSON.stringify(newArr))
+      } else if (keys == 'title') {
+        data.forEach(it => {
+          localStorage.setItem('title', JSON.stringify(it.title))
+        });
       }
     },
 
@@ -369,49 +375,124 @@ export default {
 
 <style lang="scss" scpoed>
 .about {
-  .num {
-    position: fixed;
+
+  .titleBox {
+    position: absolute;
+    text-align: center;
+    top: 6px;
+    width: 100%;
     z-index: 20;
+    color: #fff;
   }
 
-  .upload {
+  .leftArea {
     position: absolute;
-    z-index: 20;
-    right: 0;
-    width: 188px;
-    height: 66px;
-  }
-
-  .lotteryDraw {
-    position: absolute;
+    height: 100%;
     z-index: 20;
     left: 30px;
-    top: 50px;
-    text-align: left;
-    >div {
-      margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    .lotteryDraw {
+
+      .drawNameBox {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        .el-switch {
+          margin-left: 10px;
+        }
+      }
+
+      .drawQuestionBox {
+        margin-bottom: 20px;
+      }
+
+      .el-button--primary{
+        padding: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        flex-wrap: nowrap;
+        background-color: rgba(0, 127, 127, 0.37);
+        border: 1px solid rgba(127, 255, 255, 0.25);
+        color: rgba(127, 255, 255, 0.75);
+        width: 120px;
+        height: 50px;
+        box-sizing: border-box;
+      }
+
+    }
+    .uploadBox {
+      .el-button--primary{
+        padding: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        flex-wrap: nowrap;
+        background-color: rgba(0, 127, 127, 0.37);
+        border: 1px solid rgba(127, 255, 255, 0.25);
+        color: rgba(127, 255, 255, 0.75);
+        width: 120px;
+        height: 50px;
+        box-sizing: border-box;
+      }
     }
 
-    .upload {
+    .startEnd {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
+      .el-button--primary{
+        padding: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        flex-wrap: nowrap;
+        background-color: rgba(0, 127, 127, 0.37);
+        border: 1px solid rgba(127, 255, 255, 0.25);
+        color: rgba(127, 255, 255, 0.75);
+        width: 120px;
+        height: 50px;
+        box-sizing: border-box;
+        margin-right: 20px;
+      }
     }
-
-    // .repeatBox {
-    //   color: #fff;
-    //   font-size: 16px;
-    //   display: flex;
-    //   justify-content: space-between;
-    // }
   }
 
-  .startEnd {
-    position: absolute;
-    z-index: 20;
-    left: 30px;
-    bottom: 80px;
+  .seldrawNameBox {
+    margin-bottom: 10px;
+    background-color: rgba(0, 127, 127, 0.37);
+    box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
+    width: 220px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    .el-switch {
+      margin-left: 10px;
+    }
   }
+  .selDrawQuestionBox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background-color: rgba(0, 127, 127, 0.37);
+    box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
+    width: 220px;
+    height: 80px;
+  }
+  .selDrawPrizeBox {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 127, 127, 0.37);
+    box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
+    width: 220px;
+    height: 80px;
+  }
+
+  
 
   .el-dialog__headerbtn {
     top: 10px;
