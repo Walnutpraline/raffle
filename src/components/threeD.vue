@@ -402,22 +402,25 @@ export default {
   height: 160px;
   box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
   border: 1px solid rgba(127, 255, 255, 0.25);
-  line-height: 80px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  /*! autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /*! autoprefixer: on */
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   .symbol {
     display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    position: absolute;
-    top: 40px;
-    left: 0px;
-    right: 0px;
-    font-size: 60px;
+    line-height: 50px;
     font-weight: bold;
+    font-size: 40px;
     color: rgba(255, 255, 255, 0.75);
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.95);
-    font-size: 42px;
   }
 
   .problem {
@@ -425,7 +428,7 @@ export default {
     font-size: 32px;
     position: absolute;
     top: 95px;
-    left: -10px;
+    left: -5px;
     right: 0px;
     cursor: pointer;
     display: inline-block;
@@ -438,6 +441,7 @@ export default {
     font-size: 32px;
     position: absolute;
     top: 95px;
+    right: 0px;
     cursor: pointer;
     display: inline-block;
   }
