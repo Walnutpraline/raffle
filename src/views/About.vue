@@ -21,8 +21,8 @@
         <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
       </div>
       <div class="startEnd">
-        <el-button type="primary" @click="startLotteryEvt">开始抽奖</el-button>
-        <el-button type="primary" @click="endLotteryEvt">停止抽奖</el-button>
+        <el-button type="primary" @click="startLotteryEvt" :disabled="startLotteryAbled">开始抽奖</el-button>
+        <el-button type="primary" @click="endLotteryEvt" :disabled="endLotteryAbled">停止抽奖</el-button>
       </div>
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
@@ -80,7 +80,11 @@ export default {
       questionAnswerStr:'',
       selDrawName: false,
       selDrawQuestion: false,
-      selDrawPrize: false
+      selDrawPrize: false, 
+      startLotteryAbled: true, // 开始抽奖按钮是否禁用
+      endLotteryAbled: true, // 结束抽奖按钮是否禁用
+      rotateAnimate: false, // 地球旋转动画标识
+      nextlotteryDraw: false // 非第一次抽取标识
     }
   },
   created() {
@@ -94,6 +98,7 @@ export default {
     // this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
     this.title = JSON.parse(localStorage.getItem('title'))
   },
+  
   watch: {
   },
   mounted() {
@@ -111,6 +116,12 @@ export default {
       this.selDrawName = true
       this.selDrawQuestion = false,
       this.selDrawPrize = false
+
+      // 开始抽奖，结束抽奖按钮置灰，地球旋转动画标识还原，非第一次抽奖标识还原(初始化控制按钮数据)
+      this.endLotteryAbled = true
+      this.startLotteryAbled = true
+      this.rotateAnimate = false
+      this.nextlotteryDraw = false
     },
     // 抽取题目
     drawQuestionEvt() {
@@ -123,6 +134,12 @@ export default {
       this.selDrawName = false
       this.selDrawQuestion = true,
       this.selDrawPrize = false
+
+      // 开始抽奖，结束抽奖按钮置灰，地球旋转动画标识还原，非第一次抽奖标识还原(初始化控制按钮数据)
+      this.endLotteryAbled = true
+      this.startLotteryAbled = true
+      this.rotateAnimate = false
+      this.nextlotteryDraw = false
     },
     // 抽取奖品
     drawPrizeEvt() {
@@ -135,6 +152,12 @@ export default {
       this.selDrawName = false
       this.selDrawQuestion = false,
       this.selDrawPrize = true
+
+      // 开始抽奖，结束抽奖按钮置灰，地球旋转动画标识还原，非第一次抽奖标识还原(初始化控制按钮数据)
+      this.endLotteryAbled = true
+      this.startLotteryAbled = true
+      this.rotateAnimate = false
+      this.nextlotteryDraw = false
     },
 
     // 展示题目,答案
@@ -199,10 +222,26 @@ export default {
         });
         return
       }
+      // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
+      if(this.nextlotteryDraw) {
+        this.startLotteryAbled = true
+        setTimeout(() => {
+          this.endLotteryAbled = false
+        }, 1000);
+      } else {
+        this.startLotteryAbled = true
+        this.rotateAnimate = true
+      }
       this.spheres()
     },
     // 停止抽取
     endLotteryEvt() {
+      // 停止抽奖按钮置灰，开始抽奖按钮可点，开启第二次抽奖标识
+      this.endLotteryAbled = true
+      setTimeout(() => {
+        this.startLotteryAbled = false
+        this.nextlotteryDraw = true
+      }, 1000);
       // repeat是否可重复抽取
       if (this.repeat) {
         this.cardIndex = [Math.round((Math.random() * (this.tableData.length - 1)))]
@@ -359,7 +398,14 @@ export default {
       }
     },
     animateStop() {
-      console.log("animateStop")
+      if(this.rotateAnimate) {
+        this.endLotteryAbled = false
+        this.startLotteryAbled = true
+      } else {
+        this.startLotteryAbled = false
+        this.endLotteryAbled = true
+      }
+      console.log('abc');
     },
     // 历史记录
     setHistory(type, index, value) {
@@ -399,14 +445,25 @@ export default {
       .drawNameBox {
         display: flex;
         align-items: center;
-        margin-bottom: 20px;
+        width: 220px;
+        height: 80px;
         .el-switch {
           margin-left: 10px;
         }
       }
 
       .drawQuestionBox {
-        margin-bottom: 20px;
+        display: flex;
+        width: 220px;
+        height: 80px;
+        align-items: center;
+      }
+
+      .drawPrizeBox {
+        display: flex;
+        width: 220px;
+        height: 80px;
+        align-items: center;
       }
 
       .el-button--primary{
@@ -422,6 +479,12 @@ export default {
         width: 120px;
         height: 50px;
         box-sizing: border-box;
+      }
+
+      .el-button.is-disabled {
+        background-color: rgba(141, 153, 153, 0.37);
+        border: 1px solid rgba(232, 242, 242, 0.25);
+        color: rgba(170, 182, 182, 0.75);
       }
 
     }
@@ -439,6 +502,11 @@ export default {
         width: 120px;
         height: 50px;
         box-sizing: border-box;
+      }
+      .el-button.is-disabled {
+        background-color: rgba(141, 153, 153, 0.37);
+        border: 1px solid rgba(232, 242, 242, 0.25);
+        color: rgba(170, 182, 182, 0.75);
       }
     }
 
@@ -459,11 +527,15 @@ export default {
         box-sizing: border-box;
         margin-right: 20px;
       }
+      .el-button.is-disabled {
+        background-color: rgba(141, 153, 153, 0.37);
+        border: 1px solid rgba(232, 242, 242, 0.25);
+        color: rgba(170, 182, 182, 0.75);
+      }
     }
   }
 
   .seldrawNameBox {
-    margin-bottom: 10px;
     background-color: rgba(0, 127, 127, 0.37);
     box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
     width: 220px;
@@ -477,7 +549,6 @@ export default {
   .selDrawQuestionBox {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
     background-color: rgba(0, 127, 127, 0.37);
     box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
     width: 220px;
