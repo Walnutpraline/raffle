@@ -59,6 +59,7 @@ export default {
       }
     },
     table(newv, oldV) {
+      console.log(newv,'table')
       this.createdThree()
     }
   },

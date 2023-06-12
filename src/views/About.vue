@@ -42,11 +42,8 @@
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
       @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" />
-    <el-dialog
-      :visible.sync="showQuestion"
-      width="50%"
-      top="10%">
-      <span>{{questionAnswerStr}}</span>
+    <el-dialog :visible.sync="showQuestion" width="50%" top="10%">
+      <span>{{ questionAnswerStr }}</span>
     </el-dialog>
   </div>
 </template>
@@ -89,10 +86,10 @@ export default {
       lotteryDrawData: [],
       problems: false,
       tableDataList: [],
-      title:'',
-      questionAnswer:[],
-      showQuestion:false,
-      questionAnswerStr:''
+      title: '',
+      questionAnswer: [],
+      showQuestion: false,
+      questionAnswerStr: ''
     }
   },
   created() {
@@ -108,6 +105,7 @@ export default {
   watch: {
   },
   mounted() {
+    this.drawNameEvt()
   },
   methods: {
     // 抽取姓名
@@ -141,7 +139,7 @@ export default {
       // 展示题目弹框
       this.showQuestion = val.show
       // 当val里面的questionOrAnswer为0时，弹框展示问题，1代表弹框展示答案
-      if(val.questionOrAnswer == 0) {
+      if (val.questionOrAnswer == 0) {
         this.questionAnswerStr = '题目题目题目,题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目'
       } else {
         this.questionAnswerStr = '答案答案答案，答案答案答案答案答案答案答案答案答案答案答案答案'
@@ -388,6 +386,7 @@ export default {
     left: 30px;
     top: 50px;
     text-align: left;
+
     >div {
       margin-top: 20px;
     }
@@ -418,9 +417,11 @@ export default {
     right: -10px;
     background-color: unset;
   }
+
   .el-dialog__body {
     padding: 10px 20px 20px 20px;
   }
+
   .el-dialog__close:hover {
     color: #909399;
   }
