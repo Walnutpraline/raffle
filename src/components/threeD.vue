@@ -106,9 +106,9 @@ export default {
         var phi = Math.acos(-1 + (2 * i) / l)
         var theta = Math.sqrt(l * Math.PI) * phi
         var object = new THREE.Object3D()
-        object.position.x = 800 * Math.cos(theta) * Math.sin(phi)
-        object.position.y = 800 * Math.sin(theta) * Math.sin(phi)
-        object.position.z = 800 * Math.cos(phi)
+        object.position.x = 700 * Math.cos(theta) * Math.sin(phi)
+        object.position.y = 700 * Math.sin(theta) * Math.sin(phi)
+        object.position.z = 700 * Math.cos(phi)
         vector.copy(object.position).multiplyScalar(2)
         object.lookAt(vector)
         this.targets.sphere.push(object)
@@ -116,6 +116,7 @@ export default {
       this.renderer = new THREE.CSS3DRenderer()
       this.renderer.setSize(window.innerWidth, window.innerHeight)
       this.renderer.domElement.style.position = 'absolute'
+      this.renderer.domElement.style.top = '0.5rem'
       document
         .getElementById('container')
         .appendChild(this.renderer.domElement)
@@ -140,7 +141,7 @@ export default {
         var element = document.createElement('div')
         element.className = 'element'
         element.style.backgroundColor =
-          'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
+          'rgba(252,210,6,' + (Math.random() * 0.7 + 0.2) + ')'
         // 创建子元素
         var symbol
         symbol = document.createElement('span')
@@ -256,7 +257,7 @@ export default {
     changeCard(cardIndex, color) {
       const card = this.objects[cardIndex].element
       card.style.backgroundColor =
-        color || 'rgba(0,127,127,' + (Math.random() * 0.7 + 0.25) + ')'
+        color || 'rgba(252,210,6,' + (Math.random() * 0.7 + 0.25) + ')'
     },
     selectCard(duration = 600) {
       this.rotate = false
@@ -271,7 +272,7 @@ export default {
         tag++
       }
       this.selectedCardIndex.forEach((cardIndex, index) => {
-        this.changeCard(cardIndex, 'rgba(253, 105, 0, 0.95)')
+        this.changeCard(cardIndex, 'rgba(252,210,6, 0.95)')
         var object = this.objects[cardIndex]
         new TWEEN.Tween(object.position)
           .to(
@@ -408,8 +409,8 @@ export default {
 .element {
   width: 220px;
   height: 160px;
-  box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
-  border: 1px solid rgba(127, 255, 255, 0.25);
+  box-shadow: 0px 0px 12px rgba(252,210,6, 0.5);
+  border: 1px solid rgba(252,210,6, 0.25);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -428,7 +429,7 @@ export default {
     font-weight: bold;
     font-size: 40px;
     color: rgba(255, 255, 255, 0.75);
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.95);
+    text-shadow: 0 0 10px rgba(252,210,6, 0.95);
   }
 
   .problem {

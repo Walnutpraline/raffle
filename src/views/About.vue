@@ -1,13 +1,14 @@
 <template>
   <div class="about">
     <div class="titleBox">
-      {{title}}
+      <div class="title">{{title}}</div>
+      <div class="titleImg"></div>
     </div>
     <div class="leftArea">
       <div class="lotteryDraw">
         <div :class="selDrawName?'seldrawNameBox':'drawNameBox'">
           <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
-          <el-switch active-color="rgba(0, 127, 127, 0.37)" inactive-color="rgba(141, 153, 153, 0.37)" v-model="repeat">
+          <el-switch active-color="rgba(255,103,0, 0.62)" inactive-color="rgba(141, 153, 153, 0.37)" v-model="repeat">
           </el-switch>
         </div>
         <div :class="selDrawQuestion?'selDrawQuestionBox':'drawQuestionBox'">
@@ -18,13 +19,16 @@
         </div>
       </div>
       <div class="uploadBox">
-        <el-button type="primary" @click="queryHistoryEvt">查看历史</el-button>
         <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
       </div>
       <div class="startEnd">
         <el-button type="primary" @click="startLotteryEvt" :disabled="startLotteryAbled">开始抽奖</el-button>
         <el-button type="primary" @click="endLotteryEvt" :disabled="endLotteryAbled">停止抽奖</el-button>
       </div>
+    </div>
+    <div class="rightArea">
+      <div>历史记录:</div>
+      <div class="historyBox">{{historyDataStr}}</div>
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
       @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" />
@@ -33,12 +37,6 @@
       width="50%"
       top="10%">
       <span>{{questionAnswerStr}}</span>
-    </el-dialog>
-    <el-dialog
-      :visible.sync="showHistory"
-      width="50%"
-      top="10%">
-      <span>{{historyDataStr}}</span>
     </el-dialog>
   </div>
 </template>
@@ -98,7 +96,6 @@ export default {
       drawPrize: false, 
       prizeList:[], // 完整的奖品数据包括数量
       newPrizeList:[], //以奖品数量为个数的新数组
-      showHistory: false,
       historyData:[], // 历史数据
       historyDataStr:''
     }
@@ -115,9 +112,6 @@ export default {
   watch: {
   },
   mounted() {
-  },
-  beforeDestroy() {
-    localStorage.removeItem('history')
   },
   methods: {
     // 抽取姓名
@@ -324,6 +318,8 @@ export default {
         this.cardIndex.forEach(it=>{
           this.historyData.push(this.tableData[it].name)
         })
+        console.log(this.historyData);
+        this.queryHistoryEvt()
       // 抽题目
       }else if(this.drawQuestion) {
         // 抽姓名判断奖池还有姓名吗，题目，奖品同理
@@ -376,6 +372,8 @@ export default {
         
         // 存数据进历史数据
         this.historyData.push(this.tableData[tableDataIndex].name)
+        console.log(this.historyData);
+        this.queryHistoryEvt()
       }
 
     },
@@ -388,12 +386,9 @@ export default {
       console.log(this.newPrizeList);
     },
 
-    // 查看历史按钮
+    // 查看历史文字
     queryHistoryEvt() {
-      this.historyData.forEach(it=>{
-        this.historyDataStr = it
-      })
-      this.showHistory = true
+      this.historyDataStr = String(this.historyData)
     },
 
     // 数据格式化
@@ -405,8 +400,8 @@ export default {
       let xNum = 1
       let yNum = 1
       if (list instanceof Array) {
-        if (list.length < 100) {
-          for (let i = 0; i < 100; i++) {
+        if (list.length < 90) {
+          for (let i = 0; i < 90; i++) {
             if (xNum < 11) {
               if (this.problems) {
                 data.push({
@@ -553,23 +548,37 @@ export default {
   .titleBox {
     position: absolute;
     text-align: center;
-    top: 6px;
     width: 100%;
     z-index: 20;
-    color: #fff;
+    color: #FCD206;
+    .title {
+      margin-top: 8px;
+      font-size: 28px;
+    }
+    .titleImg {
+      background: url('../assets/images/title.png' ) no-repeat center center;
+      background-size:100% 100%;
+      height: 40px;
+      margin: 0px 20px;
+    }
   }
+  
 
   .leftArea {
     position: absolute;
-    height: 100%;
+    height: 460px;
+    width: 218px;
     z-index: 20;
     left: 30px;
+    top: 108px;
+    padding: 20px 16px;
+    border-radius: 6px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: flex-start;
+    background-color: rgba(255, 171, 117, .2);
     .lotteryDraw {
-
       .drawNameBox {
         display: flex;
         align-items: center;
@@ -601,11 +610,11 @@ export default {
         justify-content: center;
         border-radius: 4px;
         flex-wrap: nowrap;
-        background-color: rgba(0, 127, 127, 0.37);
-        border: 1px solid rgba(127, 255, 255, 0.25);
-        color: rgba(127, 255, 255, 0.75);
-        width: 120px;
-        height: 50px;
+        background-color: rgba(255,103,0, 0.62);
+        border: 1px solid rgba(255,103,0, 0.62);
+        color: #fff;
+        width: 130px;
+        height: 40px;
         box-sizing: border-box;
       }
 
@@ -624,11 +633,11 @@ export default {
         justify-content: center;
         border-radius: 4px;
         flex-wrap: nowrap;
-        background-color: rgba(0, 127, 127, 0.37);
-        border: 1px solid rgba(127, 255, 255, 0.25);
-        color: rgba(127, 255, 255, 0.75);
-        width: 120px;
-        height: 50px;
+        background-color: rgba(255,103,0, 0.62);
+        border: 1px solid rgba(255,103,0, 0.62);
+        color: #fff;
+        width: 130px;
+        height: 40px;
         box-sizing: border-box;
         margin-bottom: 20px;
       }
@@ -648,11 +657,11 @@ export default {
         justify-content: center;
         border-radius: 4px;
         flex-wrap: nowrap;
-        background-color: rgba(0, 127, 127, 0.37);
-        border: 1px solid rgba(127, 255, 255, 0.25);
-        color: rgba(127, 255, 255, 0.75);
-        width: 120px;
-        height: 50px;
+        background-color: rgba(255,103,0, 0.62);
+        border: 1px solid rgba(255,103,0, 0.62);
+        color: #fff;
+        width: 90px;
+        height: 40px;
         box-sizing: border-box;
         margin-right: 20px;
       }
@@ -660,54 +669,88 @@ export default {
         background-color: rgba(141, 153, 153, 0.37);
         border: 1px solid rgba(232, 242, 242, 0.25);
         color: rgba(170, 182, 182, 0.75);
+        width: 90px;
+        height: 40px;
       }
     }
   }
 
+  .rightArea {
+    position: absolute;
+    height: 460px;
+    width: 218px;
+    z-index: 20;
+    right: 30px;
+    top: 108px;
+    padding: 20px 16px;
+    border-radius: 6px;
+    background-color: rgba(255, 171, 117, .2);
+    font-size: 14px;
+    text-align: left;
+    color: rgb(253,181,2);
+    .historyBox {
+      margin-top: 20px;
+      color: #fff;
+    }
+  }
+
   .seldrawNameBox {
-    background-color: rgba(0, 127, 127, 0.37);
-    box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
     width: 220px;
     height: 80px;
     display: flex;
     align-items: center;
+    .el-button--primary{
+      border: 1px solid rgba(252,210,6) !important;
+      background-color: rgba(252,210,6) !important;
+      color:  rgba(237,28,36) !important;
+    }
     .el-switch {
       margin-left: 10px;
     }
+    
   }
   .selDrawQuestionBox {
     display: flex;
     align-items: center;
-    background-color: rgba(0, 127, 127, 0.37);
-    box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
     width: 220px;
     height: 80px;
+    .el-button--primary{
+      border: 1px solid rgba(252,210,6) !important;
+      background-color: rgba(252,210,6) !important;
+      color:  rgba(237,28,36) !important;
+    }
   }
   .selDrawPrizeBox {
     display: flex;
     align-items: center;
-    background-color: rgba(0, 127, 127, 0.37);
-    box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
     width: 220px;
     height: 80px;
+    .el-button--primary{
+      border: 1px solid rgba(252,210,6) !important;
+      background-color: rgba(252,210,6) !important;
+      color:  rgba(237,28,36) !important;
+    }
   }
 
   .el-dialog {
-    background-color: rgba(0, 127, 127, 0.8);
-    border: 1px solid rgba(127, 255, 255, 0.25);
-    color: #fff
+    
+    background-color: rgba(255,103,0, 0.8);
+    border: 1px solid rgba(255,103,0, 0.8);
+    color: #fff;
   }
   .el-dialog__headerbtn {
     top: 10px;
-    right: -10px;
     background-color: unset;
   }
   .el-dialog__body {
     padding: 50px 30px;
     color: unset;
   }
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #fff;
+  }
   .el-dialog__close:hover {
-    color: #909399;
+    color: #fff;
   }
 }
 </style>
