@@ -11,6 +11,7 @@
   </template>
 
 <script>
+import { log } from 'three';
 import XLSX from 'xlsx' // 引入插件
 
 export default {

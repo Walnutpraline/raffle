@@ -117,6 +117,7 @@ export default {
       this.renderer = new THREE.CSS3DRenderer()
       this.renderer.setSize(window.innerWidth, window.innerHeight)
       this.renderer.domElement.style.position = 'absolute'
+      this.renderer.domElement.style.left = '-1.25rem'
       document
         .getElementById('container')
         .appendChild(this.renderer.domElement)
