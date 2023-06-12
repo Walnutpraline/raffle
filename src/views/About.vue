@@ -7,7 +7,7 @@
       <div class="lotteryDraw">
         <div :class="selDrawName?'seldrawNameBox':'drawNameBox'">
           <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
-          <el-switch active-color="rgba(0, 127, 127, 0.37)" v-model="repeat">
+          <el-switch active-color="rgba(0, 127, 127, 0.37)" inactive-color="rgba(141, 153, 153, 0.37)" v-model="repeat">
           </el-switch>
         </div>
         <div :class="selDrawQuestion?'selDrawQuestionBox':'drawQuestionBox'">
@@ -18,6 +18,7 @@
         </div>
       </div>
       <div class="uploadBox">
+        <el-button type="primary" @click="queryHistoryEvt">查看历史</el-button>
         <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
       </div>
       <div class="startEnd">
@@ -32,6 +33,12 @@
       width="50%"
       top="10%">
       <span>{{questionAnswerStr}}</span>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="showHistory"
+      width="50%"
+      top="10%">
+      <span>{{historyDataStr}}</span>
     </el-dialog>
   </div>
 </template>
@@ -69,6 +76,7 @@ export default {
         y: 5
       }],
       cardIndex: [],
+      cardIndexNum:'',
       showXlsx: true,
       repeat: true,
       lotteryDrawData: [],
@@ -84,34 +92,48 @@ export default {
       startLotteryAbled: true, // 开始抽奖按钮是否禁用
       endLotteryAbled: true, // 结束抽奖按钮是否禁用
       rotateAnimate: false, // 地球旋转动画标识
-      nextlotteryDraw: false // 非第一次抽取标识
+      nextlotteryDraw: false, // 非第一次抽取标识
+      drawName: false,
+      drawQuestion: false,
+      drawPrize: false, 
+      prizeList:[], // 完整的奖品数据包括数量
+      newPrizeList:[], //以奖品数量为个数的新数组
+      showHistory: false,
+      historyData:[], // 历史数据
+      historyDataStr:''
     }
   },
   created() {
-    // if (JSON.parse(localStorage.getItem('nameData')) == null) {
-    //   this.$message({
-    //     message: '请先上传表格数据！',
-    //     type: 'warning'
-    //   });
-    //   return
-    // }
+    
     // this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
     this.title = JSON.parse(localStorage.getItem('title'))
+    this.questionAnswer = JSON.parse(JSON.stringify(JSON.parse(localStorage.getItem('questionAnswer'))))
+    this.newPrizeListEvt()
+    
   },
   
   watch: {
   },
   mounted() {
   },
+  beforeDestroy() {
+    localStorage.removeItem('history')
+  },
   methods: {
     // 抽取姓名
     drawNameEvt() {
+      if (JSON.parse(localStorage.getItem('nameData')) == null) {
+        this.$message({
+          message: '请上传姓名数据！',
+          type: 'warning'
+        });
+        return
+      }
       this.cardIndex = [] //清空中奖
       this.problems = false //是否抽取题目
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
       this.tableDataList = this.fromdataList(JSON.parse(localStorage.getItem('nameData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
-
       // 使用选中的样式，其他两项使用原样式
       this.selDrawName = true
       this.selDrawQuestion = false,
@@ -122,14 +144,27 @@ export default {
       this.startLotteryAbled = true
       this.rotateAnimate = false
       this.nextlotteryDraw = false
+
+      // 进入随机抽姓名随机函数
+      this.drawName = true
+      this.drawQuestion = false
+      this.drawPrize = false
     },
     // 抽取题目
     drawQuestionEvt() {
+      if (JSON.parse(localStorage.getItem('questionData')) == null) {
+        this.$message({
+          message: '请上传题目数据！',
+          type: 'warning'
+        });
+        return
+      }
       this.cardIndex = []
       this.problems = true
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('questionData')))
       this.tableDataList = this.fromdataList(JSON.parse(localStorage.getItem('questionData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
+      this.questionAnswer = JSON.parse(JSON.stringify(JSON.parse(localStorage.getItem('questionAnswer'))))
       // 使用选中的样式，其他两项使用原样式
       this.selDrawName = false
       this.selDrawQuestion = true,
@@ -140,14 +175,27 @@ export default {
       this.startLotteryAbled = true
       this.rotateAnimate = false
       this.nextlotteryDraw = false
+
+      // 进入随机抽题目随机函数
+      this.drawName = false
+      this.drawQuestion = true
+      this.drawPrize = false
     },
     // 抽取奖品
     drawPrizeEvt() {
+      if (JSON.parse(localStorage.getItem('prizeList')) == null) {
+        this.$message({
+          message: '请上传奖品数据！',
+          type: 'warning'
+        });
+        return
+      }
       this.cardIndex = []
       this.problems = false
       this.tableData = this.fromdata(JSON.parse(localStorage.getItem('prizeData')))
       this.tableDataList = this.fromdataList(JSON.parse(localStorage.getItem('prizeData')))
       this.lotteryDrawData = JSON.parse(JSON.stringify(this.tableData))
+      this.prizeList = JSON.parse(localStorage.getItem('prizeList'))
       // 使用选中的样式，其他两项使用原样式
       this.selDrawName = false
       this.selDrawQuestion = false,
@@ -158,18 +206,25 @@ export default {
       this.startLotteryAbled = true
       this.rotateAnimate = false
       this.nextlotteryDraw = false
+
+      // 进入随机抽奖品随机函数
+      this.drawName = false
+      this.drawQuestion = false
+      this.drawPrize = true
+
+      this.newPrizeListEvt()
     },
 
     // 展示题目,答案
     showQuestionEvt(val) {
-      console.log(val);
       // 展示题目弹框
       this.showQuestion = val.show
       // 当val里面的questionOrAnswer为0时，弹框展示问题，1代表弹框展示答案
       if(val.questionOrAnswer == 0) {
-        this.questionAnswerStr = '题目题目题目,题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目，题目题目题目题目题目题目题目题目题目题目题目题目题目题目题目'
+        // 获取存在localStorage的questionAnswer，利用获取到的下标进行匹配展示的题目及答案
+        this.questionAnswerStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question
       } else {
-        this.questionAnswerStr = '答案答案答案，答案答案答案答案答案答案答案答案答案答案答案答案'
+        this.questionAnswerStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].answer
       }
     },
     tables() {
@@ -199,12 +254,13 @@ export default {
         data.forEach(it => {
           newArr.push(it.prize)
         });
+        localStorage.setItem('prizeList', JSON.stringify(data))
         localStorage.setItem('prizeData', JSON.stringify(newArr))
       } else if (keys == 'question') {
-        this.questionAnswer = data
         data.forEach(it => {
           newArr.push(it.question)
         });
+        localStorage.setItem('questionAnswer', JSON.stringify(data))
         localStorage.setItem('questionData', JSON.stringify(newArr))
       } else if (keys == 'title') {
         data.forEach(it => {
@@ -215,13 +271,6 @@ export default {
 
     // 开始抽奖
     startLotteryEvt() {
-      if (this.lotteryDrawData.length == 0) {
-        this.$message({
-          message: '没有更多数据',
-          type: 'warning'
-        });
-        return
-      }
       // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
       if(this.nextlotteryDraw) {
         this.startLotteryAbled = true
@@ -242,23 +291,111 @@ export default {
         this.startLotteryAbled = false
         this.nextlotteryDraw = true
       }, 1000);
-      // repeat是否可重复抽取
-      if (this.repeat) {
-        this.cardIndex = [Math.round((Math.random() * (this.tableData.length - 1)))]
-      } else {
+
+      // 抽姓名
+      if(this.drawName) {
+        // 抽姓名判断奖池还有姓名吗，题目，奖品同理
+        if (this.lotteryDrawData.length == 0) {
+          this.$message({
+            message: '没有更多数据',
+            type: 'warning'
+          });
+          return
+        }
+        // repeat是否可重复抽取
+        if (this.repeat) {
+          this.cardIndex = [Math.round((Math.random() * (this.tableData.length - 1)))]
+        } else {
+          // 抽取随机数
+          var cardNum = Math.round((Math.random() * (this.lotteryDrawData.length - 1)))
+          // 通过名字池里的名字去tabData数组里面，匹配下标
+          var tableDataIndex = this.tableData.findIndex(it => {
+            return it.name == this.lotteryDrawData[cardNum].name
+          })
+          // 通过下标，展示抽中卡片
+          this.cardIndex = [tableDataIndex]
+          // 删除名字池选中的名字
+          this.lotteryDrawData = JSON.parse(JSON.stringify(this.lotteryDrawData.filter(item => {
+            return item.name != this.lotteryDrawData[cardNum].name
+          })))
+        }
+        
+        // 存数据进历史数据
+        this.cardIndex.forEach(it=>{
+          this.historyData.push(this.tableData[it].name)
+        })
+      // 抽题目
+      }else if(this.drawQuestion) {
+        // 抽姓名判断奖池还有姓名吗，题目，奖品同理
+        if (this.questionAnswer.length == 0) {
+          this.$message({
+            message: '没有更多数据',
+            type: 'warning'
+          });
+          return
+        }
         // 抽取随机数
-        var cardNum = Math.round((Math.random() * (this.lotteryDrawData.length - 1)))
-        // 通过名字池里的名字去tabData数组里面，匹配下标
+        var cardNum = Math.round((Math.random() * (this.questionAnswer.length - 1)))
+        // 通过题目池里的题目去tabData数组里面，匹配下标
         var tableDataIndex = this.tableData.findIndex(it => {
-          return it.name == this.lotteryDrawData[cardNum].name
+          return it.name == this.questionAnswer[cardNum].question
         })
         // 通过下标，展示抽中卡片
         this.cardIndex = [tableDataIndex]
-        // 删除名字池选中的名字
-        this.lotteryDrawData = JSON.parse(JSON.stringify(this.lotteryDrawData.filter((item) => item != this.lotteryDrawData[cardNum])))
+        // 点击展示对应题目及答案
+        this.cardIndexNum = tableDataIndex
+        // 删除题目答案池选中的题目
+        this.questionAnswer = JSON.parse(JSON.stringify(this.questionAnswer.filter(item => {
+          return item.question != this.questionAnswer[cardNum].question
+        })))
+
+        // 存数据进历史数据
+        // this.historyData.push(JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum])
+        // localStorage.setItem('history', JSON.stringify(this.historyData))
+      // 抽奖品
+      }else if(this.drawPrize) {
+        // 抽姓名判断奖池还有姓名吗，题目，奖品同理
+        if (this.newPrizeList.length == 0) {
+          this.$message({
+            message: '没有更多数据',
+            type: 'warning'
+          });
+          return
+        }
+        // 抽取随机数
+        var cardNum = Math.round((Math.random() * (this.newPrizeList.length - 1)))
+        // 通过奖品池里的奖品去tabData数组里面，匹配下标
+        var tableDataIndex = this.tableData.findIndex(it => {
+          return it.name == this.newPrizeList[cardNum]
+        })
+        // 通过下标，展示抽中卡片
+        this.cardIndex = [tableDataIndex]
+
+        // 删除题目答案池选中的奖品
+        this.newPrizeList.splice(cardNum,1)
+        
+        // 存数据进历史数据
+        this.historyData.push(this.tableData[tableDataIndex].name)
       }
-      this.setHistory("name", "0", "周军")
+
     },
+    // 生成以奖品数量为个数的新数组
+    newPrizeListEvt() {
+      this.prizeList = JSON.parse(localStorage.getItem('prizeList'))
+      this.prizeList && this.prizeList.forEach((it) => {
+        this.newPrizeList = this.newPrizeList.concat(Array(it.num).fill(it.prize));
+      });
+      console.log(this.newPrizeList);
+    },
+
+    // 查看历史按钮
+    queryHistoryEvt() {
+      this.historyData.forEach(it=>{
+        this.historyDataStr = it
+      })
+      this.showHistory = true
+    },
+
     // 数据格式化
     fromdataList(list) {
       if (arguments.length == 0) {
@@ -341,10 +478,10 @@ export default {
         }
         return data
       } else {
-        this.$message({
-          message: '请导入数组类型数据',
-          type: 'warning'
-        });
+        // this.$message({
+        //   message: '请导入数组类型数据',
+        //   type: 'warning'
+        // });
       }
     },
     fromdata(list) {
@@ -359,7 +496,7 @@ export default {
           if (xNum < 11) {
             if (this.problems) {
               data.push({
-                name: 'A' + i,
+                name: list[i],
                 x: xNum,
                 y: yNum
               })
@@ -375,7 +512,7 @@ export default {
             xNum = 1
             if (this.problems) {
               data.push({
-                name: 'A' + i,
+                name: list[i],
                 x: xNum,
                 y: yNum
               })
@@ -391,10 +528,10 @@ export default {
         }
         return data
       } else {
-        this.$message({
-          message: '请导入数组类型数据',
-          type: 'warning'
-        });
+        // this.$message({
+        //   message: '请导入数组类型数据',
+        //   type: 'warning'
+        // });
       }
     },
     animateStop() {
@@ -405,16 +542,7 @@ export default {
         this.startLotteryAbled = false
         this.endLotteryAbled = true
       }
-      console.log('abc');
     },
-    // 历史记录
-    setHistory(type, index, value) {
-      let history = JSON.parse(localStorage.getItem('history')) || []
-      let json = history[Number(index)] || {}
-      json[type] = value
-      history[Number(index)] = json
-      localStorage.setItem('history', JSON.stringify(history))
-    }
   }
 }
 </script>
@@ -502,6 +630,7 @@ export default {
         width: 120px;
         height: 50px;
         box-sizing: border-box;
+        margin-bottom: 20px;
       }
       .el-button.is-disabled {
         background-color: rgba(141, 153, 153, 0.37);
@@ -563,15 +692,19 @@ export default {
     height: 80px;
   }
 
-  
-
+  .el-dialog {
+    background-color: rgba(0, 127, 127, 0.8);
+    border: 1px solid rgba(127, 255, 255, 0.25);
+    color: #fff
+  }
   .el-dialog__headerbtn {
     top: 10px;
     right: -10px;
     background-color: unset;
   }
   .el-dialog__body {
-    padding: 10px 20px 20px 20px;
+    padding: 50px 30px;
+    color: unset;
   }
   .el-dialog__close:hover {
     color: #909399;
