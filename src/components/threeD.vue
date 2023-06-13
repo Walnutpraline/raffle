@@ -118,6 +118,7 @@ export default {
       this.renderer.setSize(window.innerWidth, window.innerHeight)
       this.renderer.domElement.style.position = 'absolute'
       this.renderer.domElement.style.left = '-1.8rem'
+      this.renderer.domElement.className = 'conter'
       document
         .getElementById('container')
         .appendChild(this.renderer.domElement)
