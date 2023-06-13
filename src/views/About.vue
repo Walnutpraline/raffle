@@ -236,7 +236,6 @@ export default {
 
     getMyExcelData(data) {
       // 上传表格
-      console.log(data);
       let newArr = []
       var keys = Object.keys(data[0])[0];
       if (keys == 'name') {
@@ -318,7 +317,6 @@ export default {
         this.cardIndex.forEach(it=>{
           this.historyData.push(this.tableData[it].name)
         })
-        console.log(this.historyData);
         this.queryHistoryEvt()
       // 抽题目
       }else if(this.drawQuestion) {
@@ -372,7 +370,6 @@ export default {
         
         // 存数据进历史数据
         this.historyData.push(this.tableData[tableDataIndex].name)
-        console.log(this.historyData);
         this.queryHistoryEvt()
       }
 
@@ -383,12 +380,11 @@ export default {
       this.prizeList && this.prizeList.forEach((it) => {
         this.newPrizeList = this.newPrizeList.concat(Array(it.num).fill(it.prize));
       });
-      console.log(this.newPrizeList);
     },
 
     // 查看历史文字
     queryHistoryEvt() {
-      this.historyDataStr = String(this.historyData)
+      this.historyDataStr = this.historyData.join('，')
     },
 
     // 数据格式化
