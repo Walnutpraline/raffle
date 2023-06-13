@@ -7,19 +7,19 @@
     <div class="leftArea">
       <div class="lotteryDraw">
         <div :class="selDrawName?'seldrawNameBox':'drawNameBox'">
-          <el-button type="primary" @click="drawNameEvt">抽取姓名</el-button>
+          <el-button type="primary" @click="drawNameEvt" :disabled="drawNameAbled">抽取姓名</el-button>
           <el-switch active-color="rgba(255,103,0, 0.62)" inactive-color="rgba(141, 153, 153, 0.37)" v-model="repeat">
           </el-switch>
         </div>
         <div :class="selDrawQuestion?'selDrawQuestionBox':'drawQuestionBox'">
-          <el-button type="primary" @click="drawQuestionEvt">抽取题目</el-button>
+          <el-button type="primary" @click="drawQuestionEvt" :disabled="drawQuestionAbled">抽取题目</el-button>
         </div>
         <div :class="selDrawPrize?'selDrawPrizeBox':'drawPrizeBox'" class="">
-          <el-button type="primary" @click="drawPrizeEvt">抽取奖品</el-button>
+          <el-button type="primary" @click="drawPrizeEvt" :disabled="drawPrizeAbled">抽取奖品</el-button>
         </div>
       </div>
       <div class="uploadBox">
-        <Xlsx v-show="showXlsx" @getResult="getMyExcelData" />
+        <Xlsx v-show="showXlsx" @getResult="getMyExcelData" :uploadAbled="uploadAbled"/>
       </div>
       <div class="startEnd">
         <el-button type="primary" @click="startLotteryEvt" :disabled="startLotteryAbled">开始抽奖</el-button>
@@ -94,7 +94,11 @@ export default {
       prizeList:[], // 完整的奖品数据包括数量
       newPrizeList:[], //以奖品数量为个数的新数组
       historyData:[], // 历史数据
-      historyDataStr:''
+      historyDataStr:'',
+      drawNameAbled: false,
+      drawQuestionAbled: false,
+      drawPrizeAbled: false,
+      uploadAbled: false
     }
   },
   created() {
@@ -272,10 +276,20 @@ export default {
         this.startLotteryAbled = true
         this.rotateAnimate = true
       }
+      // 开始抽奖，置灰抽姓名题目奖品,上传表格按钮
+      this.drawNameAbled = true
+      this.drawQuestionAbled = true
+      this.drawPrizeAbled = true
+      this.uploadAbled = true
       this.spheres()
     },
     // 停止抽取
     endLotteryEvt() {
+      // 停止抽奖，抽姓名题目奖品，上传表格按钮可点
+      this.drawNameAbled = false
+      this.drawQuestionAbled = false
+      this.drawPrizeAbled = false
+      this.uploadAbled = false
       // 停止抽奖按钮置灰，开始抽奖按钮可点，开启第二次抽奖标识
       this.endLotteryAbled = true
       setTimeout(() => {
@@ -694,7 +708,7 @@ export default {
     display: flex;
     align-items: center;
     .el-button--primary{
-      border: 1px solid rgba(252,210,6) !important;
+      border: 1px solid rgba(243, 74, 40, 0.662) !important;
       background-color: rgba(252,210,6) !important;
       color:  rgba(237,28,36) !important;
     }

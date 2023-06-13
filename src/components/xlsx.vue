@@ -6,12 +6,11 @@
         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
         @change="exportData"
       />
-      <el-button type="primary" @click="btnClick">上传表格</el-button>
+      <el-button type="primary" @click="btnClick" :disabled="uploadAbled">上传表格</el-button>
     </div>
   </template>
 
 <script>
-import { log } from 'three';
 import XLSX from 'xlsx' // 引入插件
 
 export default {
@@ -20,6 +19,10 @@ export default {
     accept: {
       type: String,
       default: '选择excel文件'
+    },
+    uploadAbled: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
