@@ -31,5 +31,7 @@ body {
   text-align: center;
   color: #2c3e50;
   height: 100%;
+  background: url('./assets/images/background.png' ) no-repeat center center;
+  background-size:100% 100%;
 }
 </style>
