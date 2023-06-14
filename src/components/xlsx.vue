@@ -55,7 +55,7 @@ export default {
         var wb // 读取完成的数据
         var outdata // 你需要的数据
         var reader = new FileReader()
-        reader.onload = function (e) {          
+        reader.onload = function (e) {
           // 读取成Uint8Array，再转换为Unicode编码（Unicode占两个字节）
           var bytes = new Uint8Array(reader.result)
           var length = bytes.byteLength
