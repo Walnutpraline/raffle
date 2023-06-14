@@ -22,6 +22,7 @@
         </div>
       </div>
       <div class="uploadBox">
+        <el-button type="primary" @click="clearHistoryEvt" :disabled="uploadAbled">清空历史记录</el-button>
         <Xlsx v-show="showXlsx" @getResult="getMyExcelData" :uploadAbled="uploadAbled"/>
       </div>
       <div class="startEnd">
@@ -112,7 +113,7 @@ export default {
     this.title = JSON.parse(localStorage.getItem('title'))
     this.questionAnswer = JSON.parse(JSON.stringify(JSON.parse(localStorage.getItem('questionAnswer'))))
     this.newPrizeListEvt()
-    
+    this.historyData = JSON.parse(localStorage.getItem('history')) || []
   },
   
   watch: {
@@ -335,7 +336,8 @@ export default {
         this.cardIndex.forEach(it=>{
           this.historyData.push({category:'姓名：',content:this.tableData[it].name})
         })
-
+        localStorage.setItem('history',JSON.stringify(this.historyData))
+        this.historyData = JSON.parse(localStorage.getItem('history'))
       // 抽题目
       }else if(this.drawQuestion) {
         // 抽姓名判断奖池还有姓名吗，题目，奖品同理
@@ -363,6 +365,8 @@ export default {
 
         // 存数据进历史数据
         this.historyData.push({category:'题目：',content:JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question})
+        localStorage.setItem('history',JSON.stringify(this.historyData))
+        this.historyData = JSON.parse(localStorage.getItem('history'))
         
       // 抽奖品
       }else if(this.drawPrize) {
@@ -388,7 +392,8 @@ export default {
         
         // 存数据进历史数据
         this.historyData.push({category:'奖品：',content:this.tableData[tableDataIndex].name})
-        
+        localStorage.setItem('history',JSON.stringify(this.historyData))
+        this.historyData = JSON.parse(localStorage.getItem('history'))
       }
 
     },
@@ -400,6 +405,11 @@ export default {
       });
     },
 
+    // 清空历史记录
+    clearHistoryEvt() {
+      localStorage.removeItem('history')
+      this.historyData = []
+    },
 
     // 数据格式化
     fromdataList(list) {
@@ -596,6 +606,7 @@ export default {
         display: flex;
         font-size: 14px;
         color: #fff;
+        margin-bottom: 10px;
         .switchTitle {
           margin-right: 28px;
         }
@@ -604,7 +615,7 @@ export default {
         display: flex;
         align-items: center;
         width: 220px;
-        height: 80px;
+        margin-bottom: 20px;
         .el-switch {
           margin-left: 10px;
         }
@@ -613,14 +624,14 @@ export default {
       .drawQuestionBox {
         display: flex;
         width: 220px;
-        height: 80px;
+        margin-bottom: 20px;
         align-items: center;
       }
 
       .drawPrizeBox {
         display: flex;
         width: 220px;
-        height: 80px;
+        margin-bottom: 20px;
         align-items: center;
       }
 
@@ -722,7 +733,7 @@ export default {
 
   .seldrawNameBox {
     width: 220px;
-    height: 80px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     .el-button--primary{
@@ -739,7 +750,7 @@ export default {
     display: flex;
     align-items: center;
     width: 220px;
-    height: 80px;
+    margin-bottom: 20px;
     .el-button--primary{
       border: 1px solid rgba(252,210,6) !important;
       background-color: rgba(252,210,6) !important;
@@ -750,7 +761,7 @@ export default {
     display: flex;
     align-items: center;
     width: 220px;
-    height: 80px;
+    margin-bottom: 20px;
     .el-button--primary{
       border: 1px solid rgba(252,210,6) !important;
       background-color: rgba(252,210,6) !important;
