@@ -260,6 +260,7 @@ export default {
       } else if (keys == 'title') {
         data.forEach(it => {
           localStorage.setItem('title', JSON.stringify(it.title))
+          this.title = JSON.parse(localStorage.getItem('title'))
         });
       }
     },
