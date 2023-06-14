@@ -39,8 +39,9 @@
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
       @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" />
-    <el-dialog :visible.sync="showQuestion" width="50%" top="10%">
-      <span>{{ questionAnswerStr }}</span>
+    <el-dialog :visible.sync="showQuestion" width="50%" top="9%">
+      <div>{{ questionStr }}</div>
+      <div v-show="showAnser" class="answerBox">{{ answerStr }}</div>
     </el-dialog>
   </div>
 </template>
@@ -87,7 +88,9 @@ export default {
       title:'',
       questionAnswer:[],
       showQuestion:false,
-      questionAnswerStr:'',
+      questionStr:'',
+      answerStr: '',
+      showAnser: false,
       selDrawName: false,
       selDrawQuestion: false,
       selDrawPrize: false, 
@@ -224,9 +227,13 @@ export default {
       // 当val里面的questionOrAnswer为0时，弹框展示问题，1代表弹框展示答案
       if(val.questionOrAnswer == 0) {
         // 获取存在localStorage的questionAnswer，利用获取到的下标进行匹配展示的题目及答案
-        this.questionAnswerStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question
+        this.questionStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question
+        this.answerStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].answer
+        this.showAnser = false
       } else {
-        this.questionAnswerStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].answer
+        this.questionStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question
+        this.answerStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].answer
+        this.showAnser = true
       }
     },
     tables() {
@@ -770,10 +777,10 @@ export default {
   }
 
   .el-dialog {
-    
     background-color: rgba(255,103,0, 0.8);
     border: 1px solid rgba(255,103,0, 0.8);
     color: #fff;
+    min-height: 350px;
   }
   .el-dialog__headerbtn {
     top: 10px;
@@ -781,8 +788,10 @@ export default {
   }
 
   .el-dialog__body {
-    padding: 50px 30px;
+    padding: 20px 30px;
     color: unset;
+    font-size: 24px;
+    text-align: left;
   }
   .el-dialog__headerbtn .el-dialog__close {
     color: #fff;
@@ -790,7 +799,9 @@ export default {
   .el-dialog__close:hover {
     color: #fff;
   }
-
+  .answerBox {
+    margin-top: 30px;
+  }
   
 
 

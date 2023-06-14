@@ -84,6 +84,7 @@ export default {
         reader.readAsArrayBuffer(f)
       }
       reader.readAsBinaryString(f)
+      event.target.value = ''
     }
   }
 }
