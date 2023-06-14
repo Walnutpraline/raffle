@@ -60,7 +60,6 @@ export default {
     },
   },
   created() {
-    css3drender, trackballControls;
   },
   mounted() {},
   methods: {
