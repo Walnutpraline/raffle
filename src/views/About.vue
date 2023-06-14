@@ -6,10 +6,13 @@
     </div>
     <div class="leftArea">
       <div class="lotteryDraw">
-        <div :class="selDrawName?'seldrawNameBox':'drawNameBox'">
-          <el-button type="primary" @click="drawNameEvt" :disabled="drawNameAbled">抽取姓名</el-button>
+        <div class="switchBox">
+          <div class="switchTitle">是否重复抽取姓名</div>
           <el-switch active-color="rgba(255,103,0, 0.62)" inactive-color="rgba(141, 153, 153, 0.37)" v-model="repeat">
           </el-switch>
+        </div>
+        <div :class="selDrawName?'seldrawNameBox':'drawNameBox'">
+          <el-button type="primary" @click="drawNameEvt" :disabled="drawNameAbled">抽取姓名</el-button>
         </div>
         <div :class="selDrawQuestion?'selDrawQuestionBox':'drawQuestionBox'">
           <el-button type="primary" @click="drawQuestionEvt" :disabled="drawQuestionAbled">抽取题目</el-button>
@@ -28,7 +31,10 @@
     </div>
     <div class="rightArea">
       <div>历史记录:</div>
-      <div class="historyBox">{{historyDataStr}}</div>
+      <div class="historyBox" v-for="(it,index) in historyData" :key="index">
+        <span>{{it.category}}</span>
+        <span>{{it.content}}</span>
+      </div>
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
       @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" />
@@ -94,7 +100,6 @@ export default {
       prizeList:[], // 完整的奖品数据包括数量
       newPrizeList:[], //以奖品数量为个数的新数组
       historyData:[], // 历史数据
-      historyDataStr:'',
       drawNameAbled: false,
       drawQuestionAbled: false,
       drawPrizeAbled: false,
@@ -260,6 +265,7 @@ export default {
       } else if (keys == 'title') {
         data.forEach(it => {
           localStorage.setItem('title', JSON.stringify(it.title))
+          this.title = JSON.parse(localStorage.getItem('title'))
         });
       }
     },
@@ -327,9 +333,9 @@ export default {
         
         // 存数据进历史数据
         this.cardIndex.forEach(it=>{
-          this.historyData.push(this.tableData[it].name)
+          this.historyData.push({category:'姓名：',content:this.tableData[it].name})
         })
-        this.queryHistoryEvt()
+
       // 抽题目
       }else if(this.drawQuestion) {
         // 抽姓名判断奖池还有姓名吗，题目，奖品同理
@@ -356,8 +362,8 @@ export default {
         })))
 
         // 存数据进历史数据
-        // this.historyData.push(JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum])
-        // localStorage.setItem('history', JSON.stringify(this.historyData))
+        this.historyData.push({category:'题目：',content:JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question})
+        
       // 抽奖品
       }else if(this.drawPrize) {
         // 抽姓名判断奖池还有姓名吗，题目，奖品同理
@@ -381,8 +387,8 @@ export default {
         this.newPrizeList.splice(cardNum,1)
         
         // 存数据进历史数据
-        this.historyData.push(this.tableData[tableDataIndex].name)
-        this.queryHistoryEvt()
+        this.historyData.push({category:'奖品：',content:this.tableData[tableDataIndex].name})
+        
       }
 
     },
@@ -394,10 +400,6 @@ export default {
       });
     },
 
-    // 查看历史文字
-    queryHistoryEvt() {
-      this.historyDataStr = this.historyData.join('，')
-    },
 
     // 数据格式化
     fromdataList(list) {
@@ -551,6 +553,9 @@ export default {
 </script>
 
 <style lang="scss" scpoed>
+::-webkit-scrollbar {
+  display: none;
+}
 .about {
 
   .titleBox {
@@ -587,6 +592,14 @@ export default {
     align-items: flex-start;
     background-color: rgba(255, 171, 117, .2);
     .lotteryDraw {
+      .switchBox {
+        display: flex;
+        font-size: 14px;
+        color: #fff;
+        .switchTitle {
+          margin-right: 28px;
+        }
+      }
       .drawNameBox {
         display: flex;
         align-items: center;
@@ -696,8 +709,13 @@ export default {
     font-size: 14px;
     text-align: left;
     color: rgb(253,181,2);
+    overflow: auto;
+
     .historyBox {
-      margin-top: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 10px;
       color: #fff;
     }
   }
@@ -761,5 +779,9 @@ export default {
   .el-dialog__close:hover {
     color: #fff;
   }
+
+  
+
+
 }
 </style>
