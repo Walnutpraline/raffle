@@ -48,6 +48,12 @@ export default {
         return false;
       },
     },
+    prize: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    }
   },
   watch: {
     selectedCardIndex(value) {
@@ -61,7 +67,7 @@ export default {
   },
   created() {
   },
-  mounted() {},
+  mounted() { },
   methods: {
     createdThree() {
       this.rotateOb = "";
@@ -93,9 +99,9 @@ export default {
       for (let i = 0; i < this.table.length; i++) {
         var objects = new this.$three.Object3D();
         // x轴位置
-        objects.position.x = this.table[i].x * 240 - 1330;
+        objects.position.x = this.table[i].x * 300 - 1330;
         // y轴位置
-        objects.position.y = -(this.table[i].y * 180) + 990;
+        objects.position.y = -(this.table[i].y * 245) + 990;
         this.targets.table.push(objects);
       }
       // 生成sphere
@@ -112,10 +118,11 @@ export default {
         this.targets.sphere.push(object);
       }
       this.renderer = new this.$three.CSS3DRenderer();
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
-      this.renderer.domElement.className="conter";
+      this.renderer.setSize(window.innerWidth, window.innerHeight * 0.78);
+      // this.renderer.domElement.className = "conter";
       this.renderer.domElement.style.position = "absolute";
-      this.renderer.domElement.style.top = "0.5rem";
+      this.renderer.domElement.style.top = "1.2rem";
+      this.renderer.domElement.style.left = "-3.5rem";
       document
         .getElementById("container")
         .appendChild(this.renderer.domElement);
@@ -162,6 +169,11 @@ export default {
             that.showAnswer();
           };
           element.appendChild(answer);
+        } else if (this.prize) {
+          let prize = document.createElement("span");
+          prize.className = "prize";
+          prize.textContent = i + 1;
+          element.appendChild(prize);
         }
         var object = new this.$three.CSS3DObject(element);
         object.position.x = Math.random() * 4000 - 2000;
@@ -199,7 +211,7 @@ export default {
           )
           .easing(TWEEN.Easing.Exponential.InOut)
           .start()
-          .onComplete(() => {});
+          .onComplete(() => { });
       }
       new TWEEN.Tween(this)
         .to({}, duration * 2)
@@ -259,7 +271,7 @@ export default {
     },
     selectCard(duration = 600) {
       this.rotate = false;
-      const width = 240;
+      const width = 280;
       let tag = 0; //控制中将卡牌位置
       const locates = [];
       for (let i = this.selectedCardIndex.length; i > 0; i--) {
@@ -404,9 +416,13 @@ export default {
   height: 100%;
 }
 
+.conter {
+  overflow: hidden;
+}
+
 .element {
-  width: 220px;
-  height: 160px;
+  width: 260px;
+  height: 210px;
   box-shadow: 0px 0px 15px rgba(255, 207, 16, 0.45);
   border: 2px solid rgba(255, 207, 16, 0.25);
   overflow: hidden;
@@ -434,7 +450,7 @@ export default {
     color: rgba(255, 255, 255, 0.75);
     font-size: 32px;
     position: absolute;
-    top: 110px;
+    top: 140px;
     left: -5px;
     right: 0px;
     cursor: pointer;
@@ -447,8 +463,18 @@ export default {
     color: rgba(255, 255, 255, 0.75);
     font-size: 32px;
     position: absolute;
-    top: 110px;
+    top: 140px;
     right: 0px;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .prize {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 32px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
     cursor: pointer;
     display: inline-block;
   }

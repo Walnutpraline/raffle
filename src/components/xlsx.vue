@@ -2,7 +2,7 @@
   <div>
     <input class="input-file" type="file"
       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-      @change="exportData" @click="onClick" />
+      @change="exportData"/>
     <el-button type="primary" @click="btnClick" :disabled="uploadAbled">上传表格</el-button>
   </div>
 </template>
