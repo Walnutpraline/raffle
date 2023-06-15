@@ -99,9 +99,9 @@ export default {
       for (let i = 0; i < this.table.length; i++) {
         var objects = new this.$three.Object3D();
         // x轴位置
-        objects.position.x = this.table[i].x * 300 - 1330;
+        objects.position.x = this.table[i].x * 240 - 1330;
         // y轴位置
-        objects.position.y = -(this.table[i].y * 245) + 990;
+        objects.position.y = -(this.table[i].y * 181) + 990;
         this.targets.table.push(objects);
       }
       // 生成sphere
@@ -110,19 +110,17 @@ export default {
         var phi = Math.acos(-1 + (2 * i) / l);
         var theta = Math.sqrt(l * Math.PI) * phi;
         var object = new this.$three.Object3D();
-        object.position.x = 700 * Math.cos(theta) * Math.sin(phi);
-        object.position.y = 700 * Math.sin(theta) * Math.sin(phi);
-        object.position.z = 700 * Math.cos(phi);
+        object.position.x = 850 * Math.cos(theta) * Math.sin(phi);
+        object.position.y = 850 * Math.sin(theta) * Math.sin(phi);
+        object.position.z = 850 * Math.cos(phi);
         vector.copy(object.position).multiplyScalar(2);
         object.lookAt(vector);
         this.targets.sphere.push(object);
       }
       this.renderer = new this.$three.CSS3DRenderer();
-      this.renderer.setSize(window.innerWidth, window.innerHeight * 0.78);
-      // this.renderer.domElement.className = "conter";
+      this.renderer.setSize(window.innerWidth, window.innerHeight * 0.8);
       this.renderer.domElement.style.position = "absolute";
-      this.renderer.domElement.style.top = "1.2rem";
-      this.renderer.domElement.style.left = "-3.5rem";
+      this.renderer.domElement.style.top = "2rem";
       document
         .getElementById("container")
         .appendChild(this.renderer.domElement);
@@ -170,10 +168,10 @@ export default {
           };
           element.appendChild(answer);
         } else if (this.prize) {
-          let prize = document.createElement("span");
-          prize.className = "prize";
-          prize.textContent = i + 1;
-          element.appendChild(prize);
+          let showPrizes = document.createElement("span");
+          showPrizes.className = "prize";
+          showPrizes.textContent = i + 1;
+          element.appendChild(showPrizes);
         }
         var object = new this.$three.CSS3DObject(element);
         object.position.x = Math.random() * 4000 - 2000;
@@ -271,7 +269,7 @@ export default {
     },
     selectCard(duration = 600) {
       this.rotate = false;
-      const width = 280;
+      const width = 240;
       let tag = 0; //控制中将卡牌位置
       const locates = [];
       for (let i = this.selectedCardIndex.length; i > 0; i--) {
@@ -416,41 +414,38 @@ export default {
   height: 100%;
 }
 
-.conter {
-  overflow: hidden;
-}
-
 .element {
-  width: 260px;
-  height: 210px;
+  width: 220px;
+  height: 160px;
   box-shadow: 0px 0px 15px rgba(255, 207, 16, 0.45);
   border: 2px solid rgba(255, 207, 16, 0.25);
   overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  /*! autoprefixer: off */
-  -webkit-box-orient: vertical;
-  /*! autoprefixer: on */
-  word-break: break-all;
   display: flex;
-  align-items: center;
+  // align-items: center;
   justify-content: center;
 
   .symbol {
     display: inline-block;
     line-height: 50px;
+    height: 100px;
     font-weight: bold;
     font-size: 38px;
     color: rgb(255, 255, 255);
-    // text-shadow: 0 0 10px rgba(252,210,6, 0.95);
+    padding-top: 50px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    /*! autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /*! autoprefixer: on */
+    word-break: break-all;
   }
 
   .problem {
     color: rgba(255, 255, 255, 0.75);
     font-size: 32px;
     position: absolute;
-    top: 140px;
+    top: 110px;
     left: -5px;
     right: 0px;
     cursor: pointer;
@@ -463,7 +458,7 @@ export default {
     color: rgba(255, 255, 255, 0.75);
     font-size: 32px;
     position: absolute;
-    top: 140px;
+    top: 110px;
     right: 0px;
     cursor: pointer;
     display: inline-block;
@@ -473,8 +468,8 @@ export default {
     color: rgba(255, 255, 255, 0.75);
     font-size: 32px;
     position: absolute;
-    top: 15px;
-    left: 15px;
+    top: 5px;
+    left: 10px;
     cursor: pointer;
     display: inline-block;
   }
