@@ -53,7 +53,13 @@ export default {
       default() {
         return false;
       },
-    }
+    },
+    prizeName: {
+      type: String,
+      default() {
+        return "";
+      },
+    },
   },
   watch: {
     selectedCardIndex(value) {
@@ -151,6 +157,9 @@ export default {
         symbol = document.createElement("span");
         symbol.className = "symbol";
         symbol.textContent = cardList[i].name;
+        if (this.prize) {
+          symbol.textContent = "奖品" + (i + 1);
+        }
         element.appendChild(symbol);
         if (this.problem) {
           let showPro = document.createElement("span");
@@ -167,11 +176,6 @@ export default {
             that.showAnswer();
           };
           element.appendChild(answer);
-        } else if (this.prize) {
-          let showPrizes = document.createElement("span");
-          showPrizes.className = "prize";
-          showPrizes.textContent = i + 1;
-          element.appendChild(showPrizes);
         }
         var object = new this.$three.CSS3DObject(element);
         object.position.x = Math.random() * 4000 - 2000;
@@ -264,6 +268,9 @@ export default {
     // 卡牌样式改变
     changeCard(cardIndex, color) {
       const card = this.objects[cardIndex].element;
+      if (this.prize) {
+        card.innerHTML = `<div class="symbol">${this.prizeName}</div>`
+      }
       card.style.backgroundColor =
         color || "rgba(250,65,45," + (Math.random() * 0.7 + 0.1) + ")";
     },

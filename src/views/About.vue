@@ -33,14 +33,14 @@
     <div class="rightArea">
       <div class="topAreaText">历史记录:</div>
       <div class="bottomArea">
-        <div class="historyBox" v-for="(it,index) in historyData" :key="index">
-          <span>{{it.category}}</span>
-          <span>{{it.content}}</span>
+        <div class="historyBox" v-for="(it, index) in historyData" :key="index">
+          <span>{{ it.category }}</span>
+          <span>{{ it.content }}</span>
         </div>
       </div>
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
-      @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" :prize="prizes" />
+      @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" :prize="prizes" :prizeName="prizeName" />
     <el-dialog :visible.sync="showQuestion" width="50%" top="9%">
       <div>{{ questionStr }}</div>
       <div v-show="showAnser" class="answerBox">{{ answerStr }}</div>
@@ -110,7 +110,8 @@ export default {
       drawQuestionAbled: false,
       drawPrizeAbled: false,
       uploadAbled: false,
-      prizes: false
+      prizes: false,
+      prizeName: ""
     }
   },
   created() {
@@ -208,7 +209,7 @@ export default {
       // 使用选中的样式，其他两项使用原样式
       this.selDrawName = false
       this.selDrawQuestion = false,
-      this.selDrawPrize = true
+        this.selDrawPrize = true
       // 开始抽奖，结束抽奖按钮置灰，地球旋转动画标识还原，非第一次抽奖标识还原(初始化控制按钮数据)
       this.endLotteryAbled = true
       this.startLotteryAbled = true
@@ -284,7 +285,7 @@ export default {
     // 开始抽奖
     startLotteryEvt() {
       // 抽姓名判断奖池还有姓名吗，题目，奖品同理
-      if(this.drawName) {
+      if (this.drawName) {
         if (this.lotteryDrawData.length == 0) {
           this.$message({
             message: '没有更多数据，请重新上传',
@@ -298,7 +299,7 @@ export default {
           return
         } else {
           // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
-          if(this.nextlotteryDraw) {
+          if (this.nextlotteryDraw) {
             this.startLotteryAbled = true
             setTimeout(() => {
               this.endLotteryAbled = false
@@ -313,7 +314,7 @@ export default {
           this.drawPrizeAbled = true
           this.uploadAbled = true
         }
-      }else if(this.drawQuestion) {
+      } else if (this.drawQuestion) {
         if (this.questionAnswer.length == 0) {
           this.$message({
             message: '没有更多数据，请重新上传',
@@ -327,7 +328,7 @@ export default {
           return
         } else {
           // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
-          if(this.nextlotteryDraw) {
+          if (this.nextlotteryDraw) {
             this.startLotteryAbled = true
             setTimeout(() => {
               this.endLotteryAbled = false
@@ -342,7 +343,7 @@ export default {
           this.drawPrizeAbled = true
           this.uploadAbled = true
         }
-      } else if(this.drawPrize) {
+      } else if (this.drawPrize) {
         if (this.newPrizeList.length == 0) {
           this.$message({
             message: '没有更多数据，请重新上传',
@@ -356,7 +357,7 @@ export default {
           return
         } else {
           // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
-          if(this.nextlotteryDraw) {
+          if (this.nextlotteryDraw) {
             this.startLotteryAbled = true
             setTimeout(() => {
               this.endLotteryAbled = false
@@ -389,7 +390,7 @@ export default {
       }, 1000);
 
       // 抽姓名
-      if(this.drawName) {   
+      if (this.drawName) {
         // repeat是否可重复抽取
         if (this.repeat) {
           this.cardIndex = [Math.round((Math.random() * (this.tableData.length - 1)))]
@@ -414,8 +415,8 @@ export default {
         })
         localStorage.setItem('history', JSON.stringify(this.historyData))
         this.historyData = JSON.parse(localStorage.getItem('history'))
-      // 抽题目
-      }else if(this.drawQuestion) {
+        // 抽题目
+      } else if (this.drawQuestion) {
         // 抽取随机数
         var cardNum = Math.round((Math.random() * (this.questionAnswer.length - 1)))
         // 通过题目池里的题目去tabData数组里面，匹配下标
@@ -435,13 +436,14 @@ export default {
         this.historyData.push({ category: '题目：', content: JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question })
         localStorage.setItem('history', JSON.stringify(this.historyData))
         this.historyData = JSON.parse(localStorage.getItem('history'))
-        
-      // 抽奖品
-      }else if(this.drawPrize) {
+
+        // 抽奖品
+      } else if (this.drawPrize) {
         // 抽取随机数
         var cardNum = Math.round((Math.random() * (this.newPrizeList.length - 1)))
         // 通过奖品池里的奖品去tabData数组里面，匹配下标
         var tableDataIndex = this.tableData.findIndex(it => {
+          console.log(it)
           return it.name == this.newPrizeList[cardNum]
         })
         // 通过下标，展示抽中卡片
@@ -449,7 +451,7 @@ export default {
 
         // 删除题目答案池选中的奖品
         this.newPrizeList.splice(cardNum, 1)
-
+        this.prizeName = this.tableData[tableDataIndex].name
         // 存数据进历史数据
         this.historyData.push({ category: '奖品：', content: this.tableData[tableDataIndex].name })
         localStorage.setItem('history', JSON.stringify(this.historyData))
@@ -458,6 +460,7 @@ export default {
     },
     // 生成以奖品数量为个数的新数组
     newPrizeListEvt() {
+      this.newPrizeList = []
       this.prizeList = JSON.parse(localStorage.getItem('prizeList'))
       this.prizeList && this.prizeList.forEach((it) => {
         this.newPrizeList = this.newPrizeList.concat(Array(it.num).fill(it.prize));
@@ -479,8 +482,8 @@ export default {
       let xNum = 1
       let yNum = 1
       if (list instanceof Array) {
-        if (list.length < 120) {
-          for (let i = 0; i < 120; i++) {
+        if (list.length < 100) {
+          for (let i = 0; i < 100; i++) {
             if (xNum < 11) {
               if (this.problems) {
                 data.push({
@@ -788,15 +791,18 @@ export default {
     background-color: rgba(255, 171, 117, .2);
     font-size: 14px;
     text-align: left;
-    color: rgb(253,181,2);
+    color: rgb(253, 181, 2);
+
     .topAreaText {
       height: 26px;
       position: sticky;
       top: 0;
     }
+
     .bottomArea {
       height: 434px;
       overflow: auto;
+
       .historyBox {
         white-space: nowrap;
         overflow: hidden;
@@ -805,7 +811,7 @@ export default {
         color: #fff;
       }
     }
-    
+
   }
 
   .seldrawNameBox {
