@@ -27,6 +27,7 @@ export default {
       spheresTime: 1500, //球型动画时间
       tablesTime: 1500, //表格型动画时间
       showQuestionAnswer: { show: true, questionOrAnswer: "0" }, //展示题目,答案。0代表展示问题，1代表展示答案
+      prizeShow: false
     };
   },
   props: {
@@ -59,7 +60,7 @@ export default {
       default() {
         return "";
       },
-    },
+    }
   },
   watch: {
     selectedCardIndex(value) {
@@ -154,11 +155,16 @@ export default {
           "rgba(250,65,45," + (Math.random() * 0.7 + 0.1) + ")";
         // 创建子元素
         var symbol;
-        symbol = document.createElement("span");
-        symbol.className = "symbol";
-        symbol.textContent = cardList[i].name;
         if (this.prize) {
-          symbol.textContent = "奖品" + (i + 1);
+          symbol = document.createElement("div");
+          symbol.className = "prize";
+          let icon = document.createElement("i");
+          icon.className = "el-icon-present present";
+          symbol.appendChild(icon);
+        } else {
+          symbol = document.createElement("span");
+          symbol.className = "symbol";
+          symbol.textContent = cardList[i].name;
         }
         element.appendChild(symbol);
         if (this.problem) {
@@ -269,7 +275,11 @@ export default {
     changeCard(cardIndex, color) {
       const card = this.objects[cardIndex].element;
       if (this.prize) {
-        card.innerHTML = `<div class="symbol">${this.prizeName}</div>`
+        if (this.prizeShow) {
+          card.innerHTML = `<div class="symbol">${this.prizeName}</div>`
+        } else {
+          card.innerHTML = `<div class="prize"><i class="el-icon-present present"></i></div>`
+        }
       }
       card.style.backgroundColor =
         color || "rgba(250,65,45," + (Math.random() * 0.7 + 0.1) + ")";
@@ -329,6 +339,7 @@ export default {
     // 复位函数
     resetCard() {
       const duration = 600;
+      this.prizeShow = false
       this.selectedCardIndex.forEach((index) => {
         this.changeCard(index);
         const object = this.objects[index];
@@ -398,6 +409,7 @@ export default {
     },
     // 停止转动
     stops() {
+      this.prizeShow = true
       this.rotateObj.stop();
       this.selectCard();
     },
@@ -472,13 +484,17 @@ export default {
   }
 
   .prize {
+    display: flex;
+    justify-content: center;
     color: rgba(255, 255, 255, 0.75);
-    font-size: 32px;
+    font-size: 80px;
     position: absolute;
     top: 5px;
     left: 10px;
     cursor: pointer;
     display: inline-block;
+    padding-left: 60px;
+    padding-top: 30px;
   }
 }
 

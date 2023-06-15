@@ -388,7 +388,6 @@ export default {
         this.startLotteryAbled = false
         this.nextlotteryDraw = true
       }, 1000);
-
       // 抽姓名
       if (this.drawName) {
         // repeat是否可重复抽取
@@ -408,7 +407,6 @@ export default {
             return item.name != this.lotteryDrawData[cardNum].name
           })))
         }
-
         // 存数据进历史数据
         this.cardIndex.forEach(it => {
           this.historyData.push({ category: '姓名：', content: this.tableData[it].name })
