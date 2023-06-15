@@ -1,20 +1,21 @@
 <template>
-    <div>
-      <input
-        class="input-file"
-        type="file"
-        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-        @change="exportData"
-      />
-      <el-button type="primary" @click="btnClick" :disabled="uploadAbled">上传表格</el-button>
-    </div>
-  </template>
+  <div>
+    <input class="input-file" type="file"
+      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+      @change="exportData" @click="onClick" />
+    <el-button type="primary" @click="btnClick" :disabled="uploadAbled">上传表格</el-button>
+  </div>
+</template>
 
 <script>
 import XLSX from 'xlsx' // 引入插件
 
 export default {
   name: 'InputExcel',
+  data() {
+    return {
+    }
+  },
   props: {
     accept: {
       type: String,
@@ -26,10 +27,10 @@ export default {
     }
   },
   methods: {
-    btnClick () {
+    btnClick() {
       document.querySelector('.input-file').click()
     },
-    exportData (event) {
+    exportData(event) {
       if (!event.currentTarget.files.length) {
         this.$message({
           message: '请上传excel文件！',
@@ -43,7 +44,7 @@ export default {
       var fileName = event.currentTarget.files[0].name.substring(
         event.currentTarget.files[0].name.lastIndexOf('.') + 1
       )
-      if(fileName !== 'xls' && fileName !== 'xlsm' && fileName !== 'xlt' && fileName !== 'xlsx') {
+      if (fileName !== 'xls' && fileName !== 'xlsm' && fileName !== 'xlt' && fileName !== 'xlsx') {
         that.$message.error('请上传xls，xlsm，xlt，xlsx格式文件');
         return
       }
@@ -55,7 +56,7 @@ export default {
         var wb // 读取完成的数据
         var outdata // 你需要的数据
         var reader = new FileReader()
-        reader.onload = function (e) {          
+        reader.onload = function (e) {
           // 读取成Uint8Array，再转换为Unicode编码（Unicode占两个字节）
           var bytes = new Uint8Array(reader.result)
           var length = bytes.byteLength
@@ -67,7 +68,7 @@ export default {
             type: 'binary'
           })
           outdata = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
-          if(outdata.length !== 0) {
+          if (outdata.length !== 0) {
             that.$message({
               message: '文件上传成功！',
               type: 'success'
@@ -84,13 +85,13 @@ export default {
         reader.readAsArrayBuffer(f)
       }
       reader.readAsBinaryString(f)
-    }
+    },
   }
 }
 </script>
 
-  <style scoped>
-  .input-file {
-    display: none;
-  }
-  </style>
+<style scoped>
+.input-file {
+  display: none;
+}
+</style>

@@ -29,7 +29,7 @@ export default {
       createTime: 2000,//开始过场动画时间
       spheresTime: 1500,//球型动画时间
       tablesTime: 1500, //表格型动画时间
-      showQuestionAnswer: {show:true,questionOrAnswer: '0'}, //展示题目,答案。0代表展示问题，1代表展示答案
+      showQuestionAnswer: { show: true, questionOrAnswer: '0' }, //展示题目,答案。0代表展示问题，1代表展示答案
     }
   },
   props: {
@@ -389,12 +389,12 @@ export default {
     // 显示题目
     showProblem() {
       this.showQuestionAnswer.questionOrAnswer = '0'
-      this.$emit('showQuestionEvt',this.showQuestionAnswer)
+      this.$emit('showQuestionEvt', this.showQuestionAnswer)
     },
     // 显示答案
     showAnswer() {
       this.showQuestionAnswer.questionOrAnswer = '1'
-      this.$emit('showQuestionEvt',this.showQuestionAnswer)
+      this.$emit('showQuestionEvt', this.showQuestionAnswer)
     }
   }
 }
@@ -409,8 +409,8 @@ export default {
 .element {
   width: 220px;
   height: 160px;
-  box-shadow: 0px 0px 15px rgba(255,207,16, 0.45);
-  border: 2px solid rgba(255,207,16, 0.25);
+  box-shadow: 0px 0px 15px rgba(255, 207, 16, 0.45);
+  border: 2px solid rgba(255, 207, 16, 0.25);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
