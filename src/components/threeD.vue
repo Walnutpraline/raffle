@@ -113,6 +113,7 @@ export default {
       }
       this.renderer = new this.$three.CSS3DRenderer();
       this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.renderer.domElement.className="conter";
       this.renderer.domElement.style.position = "absolute";
       this.renderer.domElement.style.top = "0.5rem";
       document
