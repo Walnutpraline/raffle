@@ -6,6 +6,7 @@
 
 <script>
 import * as TWEEN from "@tweenjs/tween.js";
+import prizePhoto from "../assets/images/prize.png";
 export default {
   name: "threeD",
   data() {
@@ -158,9 +159,10 @@ export default {
         if (this.prize) {
           symbol = document.createElement("div");
           symbol.className = "prize";
-          let icon = document.createElement("i");
-          icon.className = "el-icon-present present";
-          symbol.appendChild(icon);
+          let img = document.createElement("img");
+          img.src = prizePhoto;
+          img.className="prizeImg"
+          symbol.appendChild(img);
         } else {
           symbol = document.createElement("span");
           symbol.className = "symbol";
@@ -278,7 +280,7 @@ export default {
         if (this.prizeShow) {
           card.innerHTML = `<div class="symbol">${this.prizeName}</div>`
         } else {
-          card.innerHTML = `<div class="prize"><i class="el-icon-present present"></i></div>`
+          card.innerHTML = `<div class="prize"><img class="prizeImg" src="${prizePhoto}"></img></div>`
         }
       }
       card.style.backgroundColor =
@@ -493,8 +495,12 @@ export default {
     left: 10px;
     cursor: pointer;
     display: inline-block;
-    padding-left: 60px;
+    padding-left: 50px;
     padding-top: 30px;
+  }
+  .prizeImg{
+    width: 100px;
+    height: 100px;
   }
 }
 
