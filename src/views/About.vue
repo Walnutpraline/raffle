@@ -26,15 +26,17 @@
         <Xlsx v-show="showXlsx" @getResult="getMyExcelData" :uploadAbled="uploadAbled"/>
       </div>
       <div class="startEnd">
-        <el-button type="primary" @click="startLotteryEvt" :disabled="startLotteryAbled">开始抽奖</el-button>
-        <el-button type="primary" @click="endLotteryEvt" :disabled="endLotteryAbled">停止抽奖</el-button>
+        <el-button type="primary" @click="startLotteryEvt" :disabled="startLotteryAbled">开始</el-button>
+        <el-button type="primary" @click="endLotteryEvt" :disabled="endLotteryAbled">停止</el-button>
       </div>
     </div>
     <div class="rightArea">
-      <div>历史记录:</div>
-      <div class="historyBox" v-for="(it,index) in historyData" :key="index">
-        <span>{{it.category}}</span>
-        <span>{{it.content}}</span>
+      <div class="topAreaText">历史记录:</div>
+      <div class="bottomArea">
+        <div class="historyBox" v-for="(it,index) in historyData" :key="index">
+          <span>{{it.category}}</span>
+          <span>{{it.content}}</span>
+        </div>
       </div>
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
@@ -280,21 +282,95 @@ export default {
 
     // 开始抽奖
     startLotteryEvt() {
-      // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
-      if(this.nextlotteryDraw) {
-        this.startLotteryAbled = true
-        setTimeout(() => {
-          this.endLotteryAbled = false
-        }, 1000);
-      } else {
-        this.startLotteryAbled = true
-        this.rotateAnimate = true
+      // 抽姓名判断奖池还有姓名吗，题目，奖品同理
+      if(this.drawName) {
+        if (this.lotteryDrawData.length == 0) {
+          this.$message({
+            message: '没有更多数据，请重新上传',
+            type: 'warning'
+          });
+          this.drawNameAbled = false
+          this.drawQuestionAbled = false
+          this.drawPrizeAbled = false
+          this.uploadAbled = false
+          localStorage.removeItem('nameData')
+          return
+        } else {
+          // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
+          if(this.nextlotteryDraw) {
+            this.startLotteryAbled = true
+            setTimeout(() => {
+              this.endLotteryAbled = false
+            }, 1000);
+          } else {
+            this.startLotteryAbled = true
+            this.rotateAnimate = true
+          }
+          // 开始抽奖，置灰抽姓名题目奖品,上传表格按钮
+          this.drawNameAbled = true
+          this.drawQuestionAbled = true
+          this.drawPrizeAbled = true
+          this.uploadAbled = true
+        }
+      }else if(this.drawQuestion) {
+        if (this.questionAnswer.length == 0) {
+          this.$message({
+            message: '没有更多数据，请重新上传',
+            type: 'warning'
+          });
+          this.drawNameAbled = false
+          this.drawQuestionAbled = false
+          this.drawPrizeAbled = false
+          this.uploadAbled = false
+          localStorage.removeItem('questionData')
+          return
+        } else {
+          // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
+          if(this.nextlotteryDraw) {
+            this.startLotteryAbled = true
+            setTimeout(() => {
+              this.endLotteryAbled = false
+            }, 1000);
+          } else {
+            this.startLotteryAbled = true
+            this.rotateAnimate = true
+          }
+          // 开始抽奖，置灰抽姓名题目奖品,上传表格按钮
+          this.drawNameAbled = true
+          this.drawQuestionAbled = true
+          this.drawPrizeAbled = true
+          this.uploadAbled = true
+        }
+      } else if(this.drawPrize) {
+        if (this.newPrizeList.length == 0) {
+          this.$message({
+            message: '没有更多数据，请重新上传',
+            type: 'warning'
+          });
+          this.drawNameAbled = false
+          this.drawQuestionAbled = false
+          this.drawPrizeAbled = false
+          this.uploadAbled = false
+          localStorage.removeItem('prizeList')
+          return
+        } else {
+          // 判断是否为第一次抽奖,如果不是第一次抽奖，就把开始按钮置灰，停止按钮开启。反之，就开始按钮置灰，启动地球旋转动画标识，并加延时，点太快会出问题
+          if(this.nextlotteryDraw) {
+            this.startLotteryAbled = true
+            setTimeout(() => {
+              this.endLotteryAbled = false
+            }, 1000);
+          } else {
+            this.startLotteryAbled = true
+            this.rotateAnimate = true
+          }
+          // 开始抽奖，置灰抽姓名题目奖品,上传表格按钮
+          this.drawNameAbled = true
+          this.drawQuestionAbled = true
+          this.drawPrizeAbled = true
+          this.uploadAbled = true
+        }
       }
-      // 开始抽奖，置灰抽姓名题目奖品,上传表格按钮
-      this.drawNameAbled = true
-      this.drawQuestionAbled = true
-      this.drawPrizeAbled = true
-      this.uploadAbled = true
       this.spheres()
     },
     // 停止抽取
@@ -312,15 +388,7 @@ export default {
       }, 1000);
 
       // 抽姓名
-      if(this.drawName) {
-        // 抽姓名判断奖池还有姓名吗，题目，奖品同理
-        if (this.lotteryDrawData.length == 0) {
-          this.$message({
-            message: '没有更多数据',
-            type: 'warning'
-          });
-          return
-        }
+      if(this.drawName) {   
         // repeat是否可重复抽取
         if (this.repeat) {
           this.cardIndex = [Math.round((Math.random() * (this.tableData.length - 1)))]
@@ -347,14 +415,6 @@ export default {
         this.historyData = JSON.parse(localStorage.getItem('history'))
       // 抽题目
       }else if(this.drawQuestion) {
-        // 抽姓名判断奖池还有姓名吗，题目，奖品同理
-        if (this.questionAnswer.length == 0) {
-          this.$message({
-            message: '没有更多数据',
-            type: 'warning'
-          });
-          return
-        }
         // 抽取随机数
         var cardNum = Math.round((Math.random() * (this.questionAnswer.length - 1)))
         // 通过题目池里的题目去tabData数组里面，匹配下标
@@ -377,14 +437,6 @@ export default {
         
       // 抽奖品
       }else if(this.drawPrize) {
-        // 抽姓名判断奖池还有姓名吗，题目，奖品同理
-        if (this.newPrizeList.length == 0) {
-          this.$message({
-            message: '没有更多数据',
-            type: 'warning'
-          });
-          return
-        }
         // 抽取随机数
         var cardNum = Math.round((Math.random() * (this.newPrizeList.length - 1)))
         // 通过奖品池里的奖品去tabData数组里面，匹配下标
@@ -716,7 +768,6 @@ export default {
 
   .rightArea {
     position: absolute;
-    height: 460px;
     width: 218px;
     z-index: 20;
     right: 30px;
@@ -727,15 +778,23 @@ export default {
     font-size: 14px;
     text-align: left;
     color: rgb(253,181,2);
-    overflow: auto;
-
-    .historyBox {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 10px;
-      color: #fff;
+    .topAreaText {
+      height: 26px;
+      position: sticky;
+      top: 0;
     }
+    .bottomArea {
+      height: 434px;
+      overflow: auto;
+      .historyBox {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 10px;
+        color: #fff;
+      }
+    }
+    
   }
 
   .seldrawNameBox {
