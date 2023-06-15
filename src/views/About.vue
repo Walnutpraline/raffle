@@ -455,7 +455,6 @@ export default {
         localStorage.setItem('history', JSON.stringify(this.historyData))
         this.historyData = JSON.parse(localStorage.getItem('history'))
       }
-
     },
     // 生成以奖品数量为个数的新数组
     newPrizeListEvt() {
