@@ -68,7 +68,8 @@ THREE.TrackballControls = function (object, domElement) {
   }
   var getMouseOnScreen = (function () {
     var vector = new THREE.Vector2()
-    return function getMouseOnScreen (pageX, pageY) {
+
+    return function getMouseOnScreen(pageX, pageY) {
       vector.set(
         (pageX - _this.screen.left) / _this.screen.width,
         (pageY - _this.screen.top) / _this.screen.height
@@ -78,7 +79,8 @@ THREE.TrackballControls = function (object, domElement) {
   }())
   var getMouseOnCircle = (function () {
     var vector = new THREE.Vector2()
-    return function getMouseOnCircle (pageX, pageY) {
+
+    return function getMouseOnCircle(pageX, pageY) {
       vector.set(
         ((pageX - _this.screen.width * 0.5 - _this.screen.left) / (_this.screen.width * 0.5)),
         ((_this.screen.height + 2 * (_this.screen.top - pageY)) / _this.screen.width) // screen.width intentional
@@ -94,7 +96,8 @@ THREE.TrackballControls = function (object, domElement) {
     var objectSidewaysDirection = new THREE.Vector3()
     var moveDirection = new THREE.Vector3()
     var angle
-    return function rotateCamera () {
+
+    return function rotateCamera() {
       moveDirection.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y, 0)
       angle = moveDirection.length()
       if (angle) {
@@ -152,7 +155,7 @@ THREE.TrackballControls = function (object, domElement) {
     var objectUp = new THREE.Vector3()
     var pan = new THREE.Vector3()
 
-    return function panCamera () {
+    return function panCamera() {
       mouseChange.copy(_panEnd).sub(_panStart)
 
       if (mouseChange.lengthSq()) {
@@ -234,7 +237,7 @@ THREE.TrackballControls = function (object, domElement) {
 
   // listeners
 
-  function keydown (event) {
+  function keydown(event) {
     if (_this.enabled === false) return
 
     window.removeEventListener('keydown', keydown)
@@ -252,7 +255,7 @@ THREE.TrackballControls = function (object, domElement) {
     }
   }
 
-  function keyup () {
+  function keyup() {
     if (_this.enabled === false) return
 
     _state = _prevState
@@ -260,7 +263,7 @@ THREE.TrackballControls = function (object, domElement) {
     window.addEventListener('keydown', keydown, false)
   }
 
-  function mousedown (event) {
+  function mousedown(event) {
     if (_this.enabled === false) return
 
     event.preventDefault()
@@ -273,7 +276,7 @@ THREE.TrackballControls = function (object, domElement) {
     // 阻止浏览器的默认行为
   }
 
-  function mousemove (event) {
+  function mousemove(event) {
     if (_this.enabled === false) return
 
     event.preventDefault()
@@ -289,7 +292,7 @@ THREE.TrackballControls = function (object, domElement) {
     }
   }
 
-  function mouseup (event) {
+  function mouseup(event) {
     if (_this.enabled === false) return
 
     event.preventDefault()
@@ -302,7 +305,7 @@ THREE.TrackballControls = function (object, domElement) {
     _this.dispatchEvent(endEvent)
   }
 
-  function mousewheel (event) {
+  function mousewheel(event) {
     if (_this.enabled === false) return
 
     if (_this.noZoom === true) return
@@ -311,7 +314,7 @@ THREE.TrackballControls = function (object, domElement) {
     event.stopPropagation()
   }
 
-  function touchstart (event) {
+  function touchstart(event) {
     if (_this.enabled === false) return
 
     event.preventDefault()
@@ -339,7 +342,7 @@ THREE.TrackballControls = function (object, domElement) {
     _this.dispatchEvent(startEvent)
   }
 
-  function touchmove (event) {
+  function touchmove(event) {
     if (_this.enabled === false) return
 
     event.preventDefault()
@@ -363,7 +366,7 @@ THREE.TrackballControls = function (object, domElement) {
     }
   }
 
-  function touchend (event) {
+  function touchend(event) {
     if (_this.enabled === false) return
 
     switch (event.touches.length) {
@@ -381,7 +384,7 @@ THREE.TrackballControls = function (object, domElement) {
     _this.dispatchEvent(endEvent)
   }
 
-  function contextmenu (event) {
+  function contextmenu(event) {
     if (_this.enabled === false) return
 
     event.preventDefault()

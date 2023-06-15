@@ -60,10 +60,10 @@ THREE.CSS3DRenderer = function () {
     cameraElement.style.width = width + 'px'
     cameraElement.style.height = height + 'px'
   }
-  function epsilon (value) {
+  function epsilon(value) {
     return Math.abs(value) < 1e-10 ? 0 : value
   }
-  function getCameraCSSMatrix (matrix) {
+  function getCameraCSSMatrix(matrix) {
     var elements = matrix.elements
     return 'matrix3d(' +
       epsilon(elements[0]) + ',' +
@@ -85,7 +85,7 @@ THREE.CSS3DRenderer = function () {
       ')'
   }
 
-  function getObjectCSSMatrix (matrix, cameraCSSMatrix) {
+  function getObjectCSSMatrix(matrix, cameraCSSMatrix) {
     var elements = matrix.elements
     var matrix3d = 'matrix3d(' +
       epsilon(elements[0]) + ',' +
@@ -114,7 +114,7 @@ THREE.CSS3DRenderer = function () {
     return 'translate(-50%,-50%)' + matrix3d
   }
 
-  function renderObject (object, camera, cameraCSSMatrix) {
+  function renderObject(object, camera, cameraCSSMatrix) {
     if (object instanceof THREE.CSS3DObject) {
       var style
       if (object instanceof THREE.CSS3DSprite) {
@@ -164,14 +164,14 @@ THREE.CSS3DRenderer = function () {
       return a.distanceToSquared(b)
     }
   }())
-  function filterAndFlatten (scene) {
+  function filterAndFlatten(scene) {
     var result = []
     scene.traverse(function (object) {
       if (object instanceof THREE.CSS3DObject) result.push(object)
     })
     return result
   }
-  function zOrder (scene) {
+  function zOrder(scene) {
     var sorted = filterAndFlatten(scene).sort(function (a, b) {
       var distanceA = cache.objects.get(a).distanceToCameraSquared
       var distanceB = cache.objects.get(b).distanceToCameraSquared

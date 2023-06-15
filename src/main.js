@@ -3,12 +3,14 @@ import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import * as THREE from 'three'
+import './utils/rem'
+import './utils/CSS3DRenderer'
+import './utils/TrackballControls'
 
 Vue.use(ElementUI);
-import './utils/rem'
-
 Vue.config.productionTip = false
-
+Vue.prototype.$three = THREE
 new Vue({
   router,
   el: '#app',
