@@ -42,8 +42,10 @@
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
       @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" :prize="prizes" :prizeName="prizeName" />
     <el-dialog :visible.sync="showQuestion" width="50%" top="9%">
-      <div class="questionBox">{{ questionStr }}</div>
-      <div v-show="showAnser" class="answerBox">{{ answerStr }}</div>
+      <span slot="footer" class="dialog-footer">
+        <div class="questionBox" id="questionBox"></div>
+        <div v-show="showAnser" class="answerBox" id="answerBox"></div>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -218,7 +220,10 @@ export default {
       this.drawPrize = true
       this.newPrizeListEvt()
     },
-
+    // 获取对应的dom，实现换行显示题目
+    wrapEvt(idName,str) {
+      document.getElementById(idName).innerHTML = str
+    },
     // 展示题目,答案
     showQuestionEvt(val) {
       // 展示题目弹框
@@ -227,7 +232,9 @@ export default {
       if (val.questionOrAnswer == 0) {
         // 获取存在localStorage的questionAnswer，利用获取到的下标进行匹配展示的题目及答案
         this.questionStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question
+        this.wrapEvt("questionBox",this.questionStr)
         this.answerStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].answer
+        this.wrapEvt("answerBox", this.answerStr)
         this.showAnser = false
       } else {
         this.questionStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question
@@ -869,10 +876,15 @@ export default {
   }
 
   .el-dialog__body {
-    padding: 20px 30px;
+    padding: 0px 30px;
     color: unset;
     font-size: 24px;
     text-align: left;
+  }
+
+  .el-dialog__footer {
+    text-align: left;
+    line-height: 30px;
   }
 
   .el-dialog__headerbtn .el-dialog__close {
