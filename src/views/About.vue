@@ -861,6 +861,8 @@ export default {
   }
   .answerBox {
     margin-top: 30px;
+    border-top: 1px solid #fff;
+    line-height: 10px;
   }
   
 
