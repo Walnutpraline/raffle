@@ -458,10 +458,12 @@ export default {
     },
     // 生成以奖品数量为个数的新数组
     newPrizeListEvt() {
+      this.newPrizeList = []
       this.prizeList = JSON.parse(localStorage.getItem('prizeList'))
       this.prizeList && this.prizeList.forEach((it) => {
         this.newPrizeList = this.newPrizeList.concat(Array(it.num).fill(it.prize));
       });
+      console.log(this.newPrizeList);
     },
 
     // 清空历史记录
