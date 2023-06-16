@@ -8,74 +8,48 @@ import * as THREE from 'three'
 THREE.TrackballControls = function (object, domElement) {
   var _this = this
   var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4 }
-
   this.object = object
   this.domElement = (domElement !== undefined) ? domElement : document
-
   // API
-
   this.enabled = true
-
   this.screen = { left: 0, top: 0, width: 0, height: 0 }
-
   this.rotateSpeed = 1.0
   this.zoomSpeed = 1.2
   this.panSpeed = 0.3
-
   this.noRotate = false
   this.noZoom = false
   this.noPan = false
-
   this.staticMoving = false
   this.dynamicDampingFactor = 0.2
-
   this.minDistance = 0
   this.maxDistance = Infinity
-
   this.keys = [65 /* A */, 83 /* S */, 68]
-
   // internals
-
   this.target = new THREE.Vector3()
-
   var EPS = 0.000001
-
   var lastPosition = new THREE.Vector3()
-
   var _state = STATE.NONE
   var _prevState = STATE.NONE
-
   var _eye = new THREE.Vector3()
-
   var _movePrev = new THREE.Vector2()
   var _moveCurr = new THREE.Vector2()
-
   var _lastAxis = new THREE.Vector3()
   var _lastAngle = 0
-
   var _zoomStart = new THREE.Vector2()
   var _zoomEnd = new THREE.Vector2()
-
   var _touchZoomDistanceStart = 0
   var _touchZoomDistanceEnd = 0
-
   var _panStart = new THREE.Vector2()
   var _panEnd = new THREE.Vector2()
-
   // for reset
-
   this.target0 = this.target.clone()
   this.position0 = this.object.position.clone()
   this.up0 = this.object.up.clone()
-
   // events
-
   var changeEvent = { type: 'change' }
   var startEvent = { type: 'start' }
   var endEvent = { type: 'end' }
-
   // methods
-
   this.handleResize = function () {
     if (this.domElement === document) {
       this.screen.left = 0
@@ -92,7 +66,6 @@ THREE.TrackballControls = function (object, domElement) {
       this.screen.height = box.height
     }
   }
-
   var getMouseOnScreen = (function () {
     var vector = new THREE.Vector2()
 
@@ -101,11 +74,9 @@ THREE.TrackballControls = function (object, domElement) {
         (pageX - _this.screen.left) / _this.screen.width,
         (pageY - _this.screen.top) / _this.screen.height
       )
-
       return vector
     }
   }())
-
   var getMouseOnCircle = (function () {
     var vector = new THREE.Vector2()
 
@@ -114,11 +85,9 @@ THREE.TrackballControls = function (object, domElement) {
         ((pageX - _this.screen.width * 0.5 - _this.screen.left) / (_this.screen.width * 0.5)),
         ((_this.screen.height + 2 * (_this.screen.top - pageY)) / _this.screen.width) // screen.width intentional
       )
-
       return vector
     }
   }())
-
   this.rotateCamera = (function () {
     var axis = new THREE.Vector3()
     var quaternion = new THREE.Quaternion()
@@ -131,24 +100,17 @@ THREE.TrackballControls = function (object, domElement) {
     return function rotateCamera() {
       moveDirection.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y, 0)
       angle = moveDirection.length()
-
       if (angle) {
         _eye.copy(_this.object.position).sub(_this.target)
-
         eyeDirection.copy(_eye).normalize()
         objectUpDirection.copy(_this.object.up).normalize()
         objectSidewaysDirection.crossVectors(objectUpDirection, eyeDirection).normalize()
-
         objectUpDirection.setLength(_moveCurr.y - _movePrev.y)
         objectSidewaysDirection.setLength(_moveCurr.x - _movePrev.x)
-
         moveDirection.copy(objectUpDirection.add(objectSidewaysDirection))
-
         axis.crossVectors(moveDirection, _eye).normalize()
-
         angle *= _this.rotateSpeed
         quaternion.setFromAxisAngle(axis, angle)
-
         _eye.applyQuaternion(quaternion)
         _this.object.up.applyQuaternion(quaternion)
 

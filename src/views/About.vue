@@ -463,7 +463,6 @@ export default {
       this.prizeList && this.prizeList.forEach((it) => {
         this.newPrizeList = this.newPrizeList.concat(Array(it.num).fill(it.prize));
       });
-      console.log(this.newPrizeList);
     },
 
     // 清空历史记录

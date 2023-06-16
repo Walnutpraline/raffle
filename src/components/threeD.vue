@@ -6,6 +6,7 @@
 
 <script>
 import * as TWEEN from "@tweenjs/tween.js";
+import prizePhoto from "../assets/images/prize.png";
 export default {
   name: "threeD",
   data() {
@@ -27,6 +28,7 @@ export default {
       spheresTime: 1500, //球型动画时间
       tablesTime: 1500, //表格型动画时间
       showQuestionAnswer: { show: true, questionOrAnswer: "0" }, //展示题目,答案。0代表展示问题，1代表展示答案
+      prizeShow: false
     };
   },
   props: {
@@ -48,6 +50,18 @@ export default {
         return false;
       },
     },
+    prize: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    prizeName: {
+      type: String,
+      default() {
+        return "";
+      },
+    }
   },
   watch: {
     selectedCardIndex(value) {
@@ -61,7 +75,7 @@ export default {
   },
   created() {
   },
-  mounted() {},
+  mounted() { },
   methods: {
     createdThree() {
       this.rotateOb = "";
@@ -95,7 +109,7 @@ export default {
         // x轴位置
         objects.position.x = this.table[i].x * 240 - 1330;
         // y轴位置
-        objects.position.y = -(this.table[i].y * 180) + 990;
+        objects.position.y = -(this.table[i].y * 181) + 990;
         this.targets.table.push(objects);
       }
       // 生成sphere
@@ -104,17 +118,17 @@ export default {
         var phi = Math.acos(-1 + (2 * i) / l);
         var theta = Math.sqrt(l * Math.PI) * phi;
         var object = new this.$three.Object3D();
-        object.position.x = 700 * Math.cos(theta) * Math.sin(phi);
-        object.position.y = 700 * Math.sin(theta) * Math.sin(phi);
-        object.position.z = 700 * Math.cos(phi);
+        object.position.x = 850 * Math.cos(theta) * Math.sin(phi);
+        object.position.y = 850 * Math.sin(theta) * Math.sin(phi);
+        object.position.z = 850 * Math.cos(phi);
         vector.copy(object.position).multiplyScalar(2);
         object.lookAt(vector);
         this.targets.sphere.push(object);
       }
       this.renderer = new this.$three.CSS3DRenderer();
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.renderer.setSize(window.innerWidth, window.innerHeight * 0.8);
       this.renderer.domElement.style.position = "absolute";
-      this.renderer.domElement.style.top = "0.5rem";
+      this.renderer.domElement.style.top = "2rem";
       document
         .getElementById("container")
         .appendChild(this.renderer.domElement);
@@ -142,9 +156,18 @@ export default {
           "rgba(250,65,45," + (Math.random() * 0.7 + 0.1) + ")";
         // 创建子元素
         var symbol;
-        symbol = document.createElement("span");
-        symbol.className = "symbol";
-        symbol.textContent = cardList[i].name;
+        if (this.prize) {
+          symbol = document.createElement("div");
+          symbol.className = "prize";
+          let img = document.createElement("img");
+          img.src = prizePhoto;
+          img.className="prizeImg"
+          symbol.appendChild(img);
+        } else {
+          symbol = document.createElement("span");
+          symbol.className = "symbol";
+          symbol.textContent = cardList[i].name;
+        }
         element.appendChild(symbol);
         if (this.problem) {
           let showPro = document.createElement("span");
@@ -198,7 +221,7 @@ export default {
           )
           .easing(TWEEN.Easing.Exponential.InOut)
           .start()
-          .onComplete(() => {});
+          .onComplete(() => { });
       }
       new TWEEN.Tween(this)
         .to({}, duration * 2)
@@ -253,6 +276,13 @@ export default {
     // 卡牌样式改变
     changeCard(cardIndex, color) {
       const card = this.objects[cardIndex].element;
+      if (this.prize) {
+        if (this.prizeShow) {
+          card.innerHTML = `<div class="symbol">${this.prizeName}</div>`
+        } else {
+          card.innerHTML = `<div class="prize"><img class="prizeImg" src="${prizePhoto}"></img></div>`
+        }
+      }
       card.style.backgroundColor =
         color || "rgba(250,65,45," + (Math.random() * 0.7 + 0.1) + ")";
     },
@@ -311,6 +341,7 @@ export default {
     // 复位函数
     resetCard() {
       const duration = 600;
+      this.prizeShow = false
       this.selectedCardIndex.forEach((index) => {
         this.changeCard(index);
         const object = this.objects[index];
@@ -380,6 +411,7 @@ export default {
     },
     // 停止转动
     stops() {
+      this.prizeShow = true
       this.rotateObj.stop();
       this.selectCard();
     },
@@ -409,24 +441,25 @@ export default {
   box-shadow: 0px 0px 15px rgba(255, 207, 16, 0.45);
   border: 2px solid rgba(255, 207, 16, 0.25);
   overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  /*! autoprefixer: off */
-  -webkit-box-orient: vertical;
-  /*! autoprefixer: on */
-  word-break: break-all;
   display: flex;
-  align-items: center;
+  // align-items: center;
   justify-content: center;
 
   .symbol {
     display: inline-block;
     line-height: 50px;
+    height: 100px;
     font-weight: bold;
     font-size: 38px;
     color: rgb(255, 255, 255);
-    // text-shadow: 0 0 10px rgba(252,210,6, 0.95);
+    padding-top: 50px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    /*! autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /*! autoprefixer: on */
+    word-break: break-all;
   }
 
   .problem {
@@ -450,6 +483,24 @@ export default {
     right: 0px;
     cursor: pointer;
     display: inline-block;
+  }
+
+  .prize {
+    display: flex;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 80px;
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    cursor: pointer;
+    display: inline-block;
+    padding-left: 50px;
+    padding-top: 30px;
+  }
+  .prizeImg{
+    width: 100px;
+    height: 100px;
   }
 }
 
