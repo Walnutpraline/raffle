@@ -128,7 +128,7 @@ export default {
       this.renderer = new this.$three.CSS3DRenderer();
       this.renderer.setSize(window.innerWidth, window.innerHeight * 0.8);
       this.renderer.domElement.style.position = "absolute";
-      this.renderer.domElement.style.top = "2rem";
+      this.renderer.domElement.style.top = "3rem";
       document
         .getElementById("container")
         .appendChild(this.renderer.domElement);

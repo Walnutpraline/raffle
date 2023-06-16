@@ -42,7 +42,7 @@
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
       @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" :prize="prizes" :prizeName="prizeName" />
     <el-dialog :visible.sync="showQuestion" width="50%" top="9%">
-      <div>{{ questionStr }}</div>
+      <div class="questionBox">{{ questionStr }}</div>
       <div v-show="showAnser" class="answerBox">{{ answerStr }}</div>
     </el-dialog>
   </div>
@@ -290,6 +290,7 @@ export default {
           this.drawQuestionAbled = false
           this.drawPrizeAbled = false
           this.uploadAbled = false
+          this.startLotteryAbled = true
           localStorage.removeItem('nameData')
           return
         } else {
@@ -319,6 +320,7 @@ export default {
           this.drawQuestionAbled = false
           this.drawPrizeAbled = false
           this.uploadAbled = false
+          this.startLotteryAbled = true
           localStorage.removeItem('questionData')
           return
         } else {
@@ -348,6 +350,7 @@ export default {
           this.drawQuestionAbled = false
           this.drawPrizeAbled = false
           this.uploadAbled = false
+          this.startLotteryAbled = true
           localStorage.removeItem('prizeList')
           return
         } else {
@@ -635,7 +638,7 @@ export default {
 
     .title {
       margin-top: 8px;
-      font-size: 28px;
+      font-size: 42px;
     }
 
     .titleImg {
@@ -653,7 +656,7 @@ export default {
     width: 218px;
     z-index: 20;
     left: 30px;
-    top: 108px;
+    top: 124px;
     padding: 20px 16px;
     border-radius: 6px;
     display: flex;
@@ -780,7 +783,7 @@ export default {
     width: 218px;
     z-index: 20;
     right: 30px;
-    top: 108px;
+    top: 124px;
     padding: 20px 16px;
     border-radius: 6px;
     background-color: rgba(255, 171, 117, .2);
@@ -879,10 +882,11 @@ export default {
   .el-dialog__close:hover {
     color: #fff;
   }
-
+  .questionBox{
+    border-bottom: 1px solid #fff;
+    margin-bottom: 30px;
+  }
   .answerBox {
-    margin-top: 30px;
-    border-top: 1px solid #fff;
     line-height: 10px;
   }
 
