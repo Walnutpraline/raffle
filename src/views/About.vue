@@ -41,7 +41,7 @@
     </div>
     <Threed ref="threed" :table="tableDataList" :selectedCardIndex="cardIndex" :problem="problems"
       @animateStop="animateStop" @showQuestionEvt="showQuestionEvt" :prize="prizes" :prizeName="prizeName" />
-    <el-dialog :visible.sync="showQuestion" width="50%" top="9%">
+    <el-dialog :visible.sync="showQuestion" width="50%" top="5%">
       <span slot="footer" class="dialog-footer">
         <div class="questionBox" id="questionBox"></div>
         <div v-show="showAnser" class="answerBox" id="answerBox"></div>
@@ -894,11 +894,16 @@ export default {
     color: #fff;
   }
   .questionBox{
-    border-bottom: 1px solid #fff;
-    margin-bottom: 30px;
+    // border-bottom: 1px solid #fff;
+    margin-bottom: 15px;
+    max-height: 350px;
+    overflow-y: auto;
   }
   .answerBox {
-    line-height: 10px;
+    border-top: 1px solid #fff;
+    padding-top: 15px;
+    max-height: 150px;
+    overflow-y: auto;
   }
 
 
