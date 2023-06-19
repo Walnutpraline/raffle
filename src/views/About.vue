@@ -884,7 +884,6 @@ export default {
 
   .el-dialog__footer {
     text-align: left;
-    line-height: 30px;
   }
 
   .el-dialog__headerbtn .el-dialog__close {
