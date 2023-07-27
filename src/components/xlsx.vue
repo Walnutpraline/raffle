@@ -54,7 +54,12 @@ export default {
       FileReader.prototype.readAsBinaryString = function (f) {
         var binary = ''
         var wb // 读取完成的数据
-        var outdata // 你需要的数据
+        var outdata={
+          prize:[],
+          name:[],
+          question:[],
+          title:[],
+        } // 你需要的数据
         var reader = new FileReader()
         reader.onload = function (e) {
           // 读取成Uint8Array，再转换为Unicode编码（Unicode占两个字节）
@@ -67,7 +72,10 @@ export default {
           wb = XLSX.read(binary, {
             type: 'binary'
           })
-          outdata = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
+          outdata.prize = XLSX.utils.sheet_to_json(wb.Sheets["prize"])
+          outdata.name = XLSX.utils.sheet_to_json(wb.Sheets["name"])
+          outdata.question = XLSX.utils.sheet_to_json(wb.Sheets["question"])
+          outdata.title = XLSX.utils.sheet_to_json(wb.Sheets["title"])
           if (outdata.length !== 0) {
             that.$message({
               message: '文件上传成功！',

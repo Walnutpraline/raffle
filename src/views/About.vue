@@ -257,31 +257,32 @@ export default {
 
     getMyExcelData(data) {
       // 上传表格
-      let newArr = []
-      var keys = Object.keys(data[0])[0];
-      if (keys == 'name') {
-        data.forEach(it => {
-          newArr.push(it.name)
-        });
-        localStorage.setItem('nameData', JSON.stringify(newArr))
-      } else if (keys == 'prize') {
-        data.forEach(it => {
-          newArr.push(it.prize)
-        });
-        localStorage.setItem('prizeList', JSON.stringify(data))
-        localStorage.setItem('prizeData', JSON.stringify(newArr))
-      } else if (keys == 'question') {
-        data.forEach(it => {
-          newArr.push(it.question)
-        });
-        localStorage.setItem('questionAnswer', JSON.stringify(data))
-        localStorage.setItem('questionData', JSON.stringify(newArr))
-      } else if (keys == 'title') {
-        data.forEach(it => {
-          localStorage.setItem('title', JSON.stringify(it.title))
-          this.title = JSON.parse(localStorage.getItem('title'))
-        });
-      }
+      // 名字数据存入localStorage
+      let nameNewArr = []
+      data.name.forEach(it=>{
+        nameNewArr.push(it.name)
+      })
+      localStorage.setItem('nameData', JSON.stringify(nameNewArr))
+      // 礼物数据存入localStorage
+      localStorage.setItem('prizeList', JSON.stringify(data.prize))
+      let prizeNewArr = []
+      data.prize.forEach(it=>{
+        prizeNewArr.push(it.prize)
+      })
+      localStorage.setItem('prizeData', JSON.stringify(prizeNewArr))
+      // 问题数据存入localStorage
+      localStorage.setItem('questionAnswer', JSON.stringify(data.question))
+      let questionNewArr = []
+      data.question.forEach(it=>{
+        questionNewArr.push(it.question)
+      })
+      localStorage.setItem('questionData', JSON.stringify(questionNewArr))
+      // 名字数据存入localStorage
+      // 赋值标题
+      data.title.forEach(it=>{
+        localStorage.setItem('title', JSON.stringify(it.title))
+        this.title = JSON.parse(localStorage.getItem('title'))
+      })
     },
 
     // 开始抽奖
