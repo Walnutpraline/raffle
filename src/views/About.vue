@@ -127,6 +127,13 @@ export default {
   watch: {
   },
   mounted() {
+    if (JSON.parse(localStorage.getItem('nameData')) == null) {
+      this.$message({
+        message: '请上传表格数据！',
+        type: 'warning'
+      });
+      return
+    }
     this.drawNameEvt()
   },
   methods: {
@@ -238,7 +245,9 @@ export default {
         this.showAnser = false
       } else {
         this.questionStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].question
+        this.wrapEvt("questionBox",this.questionStr)
         this.answerStr = JSON.parse(localStorage.getItem('questionAnswer'))[this.cardIndexNum].answer
+        this.wrapEvt("answerBox", this.answerStr)
         this.showAnser = true
       }
     },
@@ -307,7 +316,7 @@ export default {
             this.startLotteryAbled = true
             setTimeout(() => {
               this.endLotteryAbled = false
-            }, 1000);
+            }, 1500);
           } else {
             this.startLotteryAbled = true
             this.rotateAnimate = true
@@ -337,7 +346,7 @@ export default {
             this.startLotteryAbled = true
             setTimeout(() => {
               this.endLotteryAbled = false
-            }, 1000);
+            }, 1500);
           } else {
             this.startLotteryAbled = true
             this.rotateAnimate = true
@@ -367,7 +376,7 @@ export default {
             this.startLotteryAbled = true
             setTimeout(() => {
               this.endLotteryAbled = false
-            }, 1000);
+            }, 1500);
           } else {
             this.startLotteryAbled = true
             this.rotateAnimate = true
@@ -393,7 +402,7 @@ export default {
       setTimeout(() => {
         this.startLotteryAbled = false
         this.nextlotteryDraw = true
-      }, 1000);
+      }, 1500);
 
       // 抽姓名
       if (this.drawName) {

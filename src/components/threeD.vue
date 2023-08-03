@@ -417,11 +417,13 @@ export default {
     },
     // 显示题目
     showProblem() {
+      console.log(this.showQuestionAnswer);
       this.showQuestionAnswer.questionOrAnswer = "0";
       this.$emit("showQuestionEvt", this.showQuestionAnswer);
     },
     // 显示答案
     showAnswer() {
+      console.log(this.showQuestionAnswer);
       this.showQuestionAnswer.questionOrAnswer = "1";
       this.$emit("showQuestionEvt", this.showQuestionAnswer);
     },

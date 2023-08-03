@@ -72,13 +72,13 @@ export default {
           wb = XLSX.read(binary, {
             type: 'binary'
           })
-          outdata.prize = XLSX.utils.sheet_to_json(wb.Sheets["prize"])
-          outdata.name = XLSX.utils.sheet_to_json(wb.Sheets["name"])
-          outdata.question = XLSX.utils.sheet_to_json(wb.Sheets["question"])
-          outdata.title = XLSX.utils.sheet_to_json(wb.Sheets["title"])
+          outdata.prize = XLSX.utils.sheet_to_json(wb.Sheets["奖品配置"])
+          outdata.name = XLSX.utils.sheet_to_json(wb.Sheets["人员配置"])
+          outdata.question = XLSX.utils.sheet_to_json(wb.Sheets["题目配置"])
+          outdata.title = XLSX.utils.sheet_to_json(wb.Sheets["活动标题配置"])
           if (outdata.length !== 0) {
             that.$message({
-              message: '文件上传成功！',
+              message: '文件上传成功，请选择抽取类型。',
               type: 'success'
             });
           } else {
