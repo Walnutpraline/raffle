@@ -4,6 +4,7 @@
       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
       @change="exportData"/>
     <el-button type="primary" @click="btnClick" :disabled="uploadAbled">上传表格</el-button>
+    <el-button type="primary" @click="downloadExl" :disabled="uploadAbled">下载</el-button>
   </div>
 </template>
 
@@ -14,6 +15,7 @@ export default {
   name: 'InputExcel',
   data() {
     return {
+      wopts:{ bookType: 'xlsx', bookSST: false, type: 'binary' },
     }
   },
   props: {
@@ -24,6 +26,11 @@ export default {
     uploadAbled: {
       type: Boolean,
       default: false
+    },
+    historyList:{
+      type: Array,
+      // eslint-disable-next-line vue/require-valid-default-prop
+      default:[]
     }
   },
   methods: {
@@ -94,6 +101,32 @@ export default {
       }
       reader.readAsBinaryString(f)
       event.target.value = ''
+    },
+    downloadExl() {
+        const wb = { SheetNames: ['Sheet1'], Sheets: {}, Props: {} };
+        wb.Sheets['Sheet1'] = XLSX.utils.json_to_sheet(this.historyList);//通过json_to_sheet转成单页(Sheet)数据
+        this.saveAs(new Blob([this.s2ab(XLSX.write(wb, this.wopts))], { type: "application/octet-stream" }), "历史记录" + '.' + (this.wopts.bookType=="biff2"?"xls":this.wopts.bookType));
+    },
+    saveAs(obj, fileName) {//当然可以自定义简单的下载文件实现方式 
+        var tmpa = document.createElement("a");
+        tmpa.download = fileName || "下载";
+        tmpa.href = URL.createObjectURL(obj); //绑定a标签
+        tmpa.click(); //模拟点击实现下载
+        setTimeout(function () { //延时释放
+            URL.revokeObjectURL(obj); //用URL.revokeObjectURL()来释放这个object URL
+        }, 100);
+    },
+    s2ab(valu) {
+        if (typeof ArrayBuffer !== 'undefined') {
+            var buf = new ArrayBuffer(valu.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i != valu.length; ++i) view[i] = valu.charCodeAt(i) & 0xFF;
+            return buf;
+        } else {
+            var buf = new Array(valu.length);
+            for (var i = 0; i != valu.length; ++i) buf[i] = valu.charCodeAt(i) & 0xFF;
+            return buf;
+        }
     }
   }
 }
