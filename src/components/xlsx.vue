@@ -3,8 +3,8 @@
     <input class="input-file" type="file"
       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
       @change="exportData"/>
+    <el-button type="primary" @click="downloadExl" :disabled="uploadAbled">导出历史记录</el-button>
     <el-button type="primary" @click="btnClick" :disabled="uploadAbled">上传表格</el-button>
-    <el-button type="primary" @click="downloadExl" :disabled="uploadAbled">下载</el-button>
   </div>
 </template>
 
@@ -135,5 +135,8 @@ export default {
 <style scoped>
 .input-file {
   display: none;
+}
+.el-button+.el-button {
+  margin-left: 0px;
 }
 </style>

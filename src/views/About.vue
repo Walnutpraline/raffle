@@ -23,7 +23,7 @@
       </div>
       <div class="uploadBox">
         <el-button type="primary" @click="clearHistoryEvt" :disabled="uploadAbled">清空历史记录</el-button>
-        <Xlsx v-show="showXlsx" @getResult="getMyExcelData" :uploadAbled="uploadAbled" :historyList="historyList" />
+        <Xlsx v-show="showXlsx" @getResult="getMyExcelData" :uploadAbled="uploadAbled" :historyList="historyData" />
       </div>
       <div class="startEnd">
         <el-button type="primary" @click="startLotteryEvt" :disabled="startLotteryAbled">开始</el-button>
@@ -114,7 +114,6 @@ export default {
       uploadAbled: false,
       prizes: false,
       prizeName: "",
-      historyList:[{"保质期临期预警(天)":"1"},{"保质期临期预警(天)":"2"}]
     }
   },
   created() {
