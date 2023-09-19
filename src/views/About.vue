@@ -7,19 +7,19 @@
     <div class="leftArea">
       <div class="lotteryDraw">
         <div class="switchBox">
-          <div class="switchTitle">是否重复抽取姓名</div>
+          <!-- <div class="switchTitle">是否重复抽取姓名</div>
           <el-switch active-color="rgba(255,103,0, 0.62)" inactive-color="rgba(141, 153, 153, 0.37)" v-model="repeat">
-          </el-switch>
+          </el-switch> -->
         </div>
         <div :class="selDrawName ? 'seldrawNameBox' : 'drawNameBox'">
-          <el-button type="primary" @click="drawNameEvt" :disabled="drawNameAbled">抽取姓名</el-button>
+          <el-button type="primary" @click="drawNameEvt" :disabled="drawNameAbled">抽取编号</el-button>
         </div>
-        <div :class="selDrawQuestion ? 'selDrawQuestionBox' : 'drawQuestionBox'">
+        <!-- <div :class="selDrawQuestion ? 'selDrawQuestionBox' : 'drawQuestionBox'">
           <el-button type="primary" @click="drawQuestionEvt" :disabled="drawQuestionAbled">抽取题目</el-button>
-        </div>
-        <div :class="selDrawPrize ? 'selDrawPrizeBox' : 'drawPrizeBox'" class="">
+        </div> -->
+        <!-- <div :class="selDrawPrize ? 'selDrawPrizeBox' : 'drawPrizeBox'" class="">
           <el-button type="primary" @click="drawPrizeEvt" :disabled="drawPrizeAbled">抽取奖品</el-button>
-        </div>
+        </div> -->
       </div>
       <div class="uploadBox">
         <el-button type="primary" @click="clearHistoryEvt" :disabled="uploadAbled">清空历史记录</el-button>
@@ -85,11 +85,11 @@ export default {
       cardIndex: [],
       cardIndexNum: '',
       showXlsx: true,
-      repeat: true,
+      repeat: false,
       lotteryDrawData: [],
       problems: false,
       tableDataList: [],
-      title: '',
+      title: '中国工商银行四川省分行2024年度校园招聘四川大学专场',
       questionAnswer: [],
       showQuestion: false,
       questionStr: '',
@@ -118,7 +118,7 @@ export default {
   },
   created() {
     // this.tableData = this.fromdata(JSON.parse(localStorage.getItem('nameData')))
-    this.title = JSON.parse(localStorage.getItem('title'))
+    this.title = !!this.title ? this.title : JSON.parse(localStorage.getItem('title'))
     this.questionAnswer = JSON.parse(JSON.stringify(JSON.parse(localStorage.getItem('questionAnswer'))))
     this.newPrizeListEvt()
     this.historyData = JSON.parse(localStorage.getItem('history')) || []
